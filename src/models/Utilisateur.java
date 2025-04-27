@@ -16,7 +16,7 @@ public class Utilisateur {
         this.role = role;
     }
 
-    // Constructeur sans mot de passe (utile pour les affichages)
+    // Constructeur
     public Utilisateur(int id, String login, String role) {
         this.id = id;
         this.login = login;
@@ -65,7 +65,7 @@ public class Utilisateur {
         NomComplet = nomComplet;
     }
 
-    // toString (optionnel)
+
     @Override
     public String toString() {
         return "Utilisateur{" +

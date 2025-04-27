@@ -251,7 +251,7 @@ public class SeancesValidees extends JPanel {
     }
 
     private void initUI() {
-        // Panel d'en-tête avec titre et outils de filtrage
+        // Panel principal
         JPanel headerPanel = new JPanel(new BorderLayout());
 
         JLabel titre = new JLabel("Séances validées", SwingConstants.CENTER);
@@ -285,7 +285,7 @@ public class SeancesValidees extends JPanel {
         headerPanel.add(filterPanel, BorderLayout.SOUTH);
         add(headerPanel, BorderLayout.NORTH);
 
-        // Modèle de table (sans la colonne Salle)
+        // Modèle de table
         model = new DefaultTableModel(
                 new Object[]{"ID", "Date", "Heure", "Matière", "Enseignant", "Contenu"},
                 0
@@ -313,11 +313,11 @@ public class SeancesValidees extends JPanel {
         table.setIntercellSpacing(new Dimension(0, 0));
         table.setShowGrid(false);
 
-        // Centrer le texte dans les cellules (sauf enseignant et contenu)
+        // Centrer le texte dans les cellules
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         for (int i = 0; i < table.getColumnCount(); i++) {
-            if (i != 4 && i != 5) { // Colonnes Enseignant et Contenu non centrées
+            if (i != 4 && i != 5) {
                 table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             }
         }
@@ -434,7 +434,5 @@ public class SeancesValidees extends JPanel {
         sorter.setRowFilter(filter);
     }
 
-    public void refresh() {
-        chargerSeancesValidees();
-    }
+
 }

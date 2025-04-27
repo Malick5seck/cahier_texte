@@ -1,4 +1,4 @@
-package interfaces;
+/*package interfaces;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -66,3 +66,5 @@ public class CahierGlobal extends JFrame {
         }
     }
 }
+
+ */

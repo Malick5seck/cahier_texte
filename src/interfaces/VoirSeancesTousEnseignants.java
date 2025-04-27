@@ -608,14 +608,14 @@ public class VoirSeancesTousEnseignants extends JPanel {
             File file = fileChooser.getSelectedFile();
 
             try (PrintWriter writer = new PrintWriter(file)) {
-                // En-têtes (sauf colonne ID)
+                // En-têtes sans colonne ID
                 for (int i = 1; i < model.getColumnCount(); i++) {
                     writer.print("\"" + model.getColumnName(i) + "\"");
                     if (i < model.getColumnCount() - 1) writer.print(",");
                 }
                 writer.println();
 
-                // Données (sauf colonne ID)
+                // Données sans colonne ID
                 for (int i = 0; i < model.getRowCount(); i++) {
                     for (int j = 1; j < model.getColumnCount(); j++) {
                         Object value = model.getValueAt(i, j);

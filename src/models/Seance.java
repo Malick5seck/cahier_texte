@@ -150,7 +150,7 @@ public class Seance {
     private String statut;
     private String commentaire;
 
-    // ✅ Constructeur complet avec ID (pour validation/responsable)
+    //  Constructeur complet avec ID (pour validation/responsable)
     public Seance(int id, String nomCours, LocalDate date, LocalTime heureDebut, String contenu, String statut, String commentaire) {
         this.id = id;
         this.nomCours = nomCours;
@@ -161,7 +161,7 @@ public class Seance {
         this.commentaire = commentaire;
     }
 
-    // ✅ Constructeur sans ID (utile pour saisie côté enseignant)
+    // Constructeur sans ID
     public Seance(String nomCours, LocalDate date, LocalTime heureDebut, String contenu, String statut, String commentaire) {
         this.nomCours = nomCours;
         this.date = date;
@@ -171,7 +171,7 @@ public class Seance {
         this.commentaire = commentaire;
     }
 
-    // ✅ Getters et Setters
+    //  Getters et Setters
 
     public int getId() {
         return id;
@@ -229,7 +229,7 @@ public class Seance {
         this.commentaire = commentaire;
     }
 
-    // ✅ Pour affichage console ou debug
+
     @Override
     public String toString() {
         return "Seance{" +

@@ -496,7 +496,7 @@ public class ValidationSeancesResponsable extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
-        // Panel d'en-tête avec titre et recherche
+        // Panel principal
         JPanel headerPanel = new JPanel(new BorderLayout());
 
         JLabel titre = new JLabel("Séances en attente de validation", SwingConstants.CENTER);
@@ -517,7 +517,7 @@ public class ValidationSeancesResponsable extends JPanel {
 
         add(headerPanel, BorderLayout.NORTH);
 
-        // Modèle de table avec colonnes
+        //  table avec colonnes
         model = new DefaultTableModel(new String[]{
                 "ID", "Cours", "Date", "Heure", "Contenu", "Commentaire", "Actions"
         }, 0) {
@@ -546,7 +546,7 @@ public class ValidationSeancesResponsable extends JPanel {
         table.setShowGrid(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Centrer le texte dans les cellules
+        // Centrer le texte dans les colonnes
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         for (int i = 0; i < table.getColumnCount() - 2; i++) {

@@ -166,14 +166,12 @@ public class LoginFrame extends JFrame {
 
 package interfaces;
 import DBO.DBconnect;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Objects;
+
 
 public class LoginFrame extends JFrame {
     private JTextField loginField;
@@ -189,11 +187,11 @@ public class LoginFrame extends JFrame {
         setLocationRelativeTo(null);
 
         // IMAGE POUR LE FOND
-        try {
-            backgroundImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/img1.jpg")));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Image de fond non trouvée", "Erreur", JOptionPane.ERROR_MESSAGE);
-        }
+//        try {
+//            backgroundImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/img1.jpg")));
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(this, "Image de fond non trouvée", "Erreur", JOptionPane.ERROR_MESSAGE);
+//        }
 
         // Création du panel principal avec image de fond
         JPanel mainPanel = new JPanel(new GridBagLayout()) {
@@ -281,10 +279,8 @@ public class LoginFrame extends JFrame {
         gbc.gridy = 4;
         formPanel.add(statusLabel, gbc);
 
-        // Ajout du formulaire au panel principal
         mainPanel.add(formPanel);
 
-        // Configuration finale du JFrame
         setContentPane(mainPanel);
     }
 
@@ -318,7 +314,7 @@ public class LoginFrame extends JFrame {
     private boolean champsValid() {
         if (loginField.getText().trim().isEmpty() || passwordField.getPassword().length == 0) {
             statusLabel.setForeground(Color.RED);
-            statusLabel.setText("Tous les champs sont obligatoires.");
+            statusLabel.setText("Tous les champs sont obligatoires.      ");
             return false;
         }
         return true;
