@@ -447,7 +447,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.PrintWriter;
 import java.sql.*;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -474,7 +473,7 @@ public class VoirSeancesTousEnseignants extends JPanel {
         model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Toutes les cellules non éditables
+                return false;
             }
         };
 
@@ -505,7 +504,7 @@ public class VoirSeancesTousEnseignants extends JPanel {
 
         // Panel de filtres
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        filterCombo = new JComboBox<>(new String[]{"Toutes", "Validées", "En attente", "Refusées"});
+        filterCombo = new JComboBox<>(new String[]{"Toutes", "Validees", "En attente", "Refusees"});
         filterCombo.addActionListener(e -> applyFilters());
 
         JButton refreshBtn = new JButton("Actualiser");
@@ -525,7 +524,7 @@ public class VoirSeancesTousEnseignants extends JPanel {
         searchPanel.add(searchField);
         searchPanel.add(searchBtn);
 
-        // Panel d'actions (seulement export)
+        // Panel d'actions
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         JButton exportBtn = createActionButton("Exporter", Color.BLUE, e -> exporterCSV());
         actionPanel.add(exportBtn);
@@ -556,7 +555,7 @@ public class VoirSeancesTousEnseignants extends JPanel {
                              "s.dateseance AS date_seance, s.heure_debut, s.heure_fin, " +
                              "s.contenu, s.statut, s.commentaire_refus AS commentaire " +
                              "FROM seance s " +
-                             "JOIN utilisateurs u ON s.enseignant_id = u.id " +
+                             "JOIN utilisateur u ON s.enseignant_id = u.id " +
                              "JOIN cours c ON s.cours_id = c.id " +
                              "ORDER BY s.dateseance DESC, s.heure_debut DESC")) {
 

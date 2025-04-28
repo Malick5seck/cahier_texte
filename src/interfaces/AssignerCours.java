@@ -44,7 +44,7 @@ public class AssignerCours extends JFrame {
 
     private void chargerEnseignants() {
         try (Connection conn = DBconnect.getconnection()) {
-            String sql = "SELECT id, login FROM utilisateurs WHERE role = 'enseignant'";
+            String sql = "SELECT id, login FROM utilisateur WHERE role = 'enseignant'";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -311,7 +311,7 @@ public class AssignerCours extends JPanel {
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(
                      "SELECT id, CONCAT(prenom, ' ', nom) AS nom_complet " +
-                             "FROM utilisateurs WHERE role = 'enseignant'")) {
+                             "FROM utilisateur WHERE role = 'enseignant'")) {
 
             while (rs.next()) {
                 enseignantsMap.put(rs.getString("nom_complet"), rs.getInt("id"));
@@ -331,7 +331,7 @@ public class AssignerCours extends JPanel {
              ResultSet rs = st.executeQuery(
                      "SELECT c.id, c.nom, GROUP_CONCAT(u.login SEPARATOR ', ') AS enseignants " +
                              "FROM cours c LEFT JOIN enseignants_cours ec ON c.id = ec.id_cours " +
-                             "LEFT JOIN utilisateurs u ON ec.id_enseignant = u.id " +
+                             "LEFT JOIN utilisateur u ON ec.id_enseignant = u.id " +
                              "GROUP BY c.id, c.nom ORDER BY c.nom")) {
 
             while (rs.next()) {

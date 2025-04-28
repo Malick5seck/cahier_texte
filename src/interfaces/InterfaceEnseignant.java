@@ -3060,7 +3060,7 @@ public class InterfaceEnseignant extends JFrame {
         navPanel.add(logoPanel);
         navPanel.add(Box.createVerticalStrut(20));
 
-        // Boutons de navigation (style identique à ChefDept)
+        // Boutons de navigation
         JButton btnAjouter = createNavButton("Ajouter une séance", "add");
         JButton btnVoir = createNavButton("Voir séances", "view");
         JButton btnDeconnexion = createNavButton("Déconnexion", "logout", new Color(220, 80, 60));
@@ -3140,7 +3140,7 @@ public class InterfaceEnseignant extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
 
         JLabel titleLabel = new JLabel("Ajouter une séance");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridwidth = 2;
         gbc.gridx = 0;
         gbc.gridy = 0;

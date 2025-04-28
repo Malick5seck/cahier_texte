@@ -116,7 +116,7 @@ import java.util.List;
 
 public class SeanceDAO {
 
-    // ✅ Récupérer les séances non validées
+    // Récupérer les séances non validées
     public static List<Seance> getSeancesNonValidees() {
         List<Seance> seances = new ArrayList<>();
 
@@ -150,7 +150,7 @@ public class SeanceDAO {
         return seances;
     }
 
-    // ✅ Mettre à jour le statut d'une séance
+    //  Mettre à jour le statut d'une séance
     public static boolean mettreAJourStatut(int idSeance, String statut, String commentaire) {
         String query = "UPDATE seance SET statut = ?, commentaire_refus = ? WHERE id = ?";
 
@@ -168,7 +168,7 @@ public class SeanceDAO {
         }
     }
 
-    // ✅ (Déjà existante) Récupérer les séances par enseignant
+    // Récupérer les séances par enseignant
     public static List<Seance> getSeancesByEnseignant(int idEnseignant) {
         List<Seance> seances = new ArrayList<>();
 

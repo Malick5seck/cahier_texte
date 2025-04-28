@@ -27,27 +27,28 @@
       <console name="test" type="STANDARD" schema="teste" session="Main"><![CDATA[use teste;
 create table utilisateur(
      id int auto_increment primary key ,
-     nom varchar(100) not null unique ,
+     prenom VARCHAR(100) not null ,
+     nom varchar(100) not null ,
      login varchar(100) not null unique,
      password varchar(150) not null ,
      role ENUM('Chefdepartement','Enseignant','Responsable') not null
 );
-insert into utilisateur (nom, login, password, role)
-values ('abo', 'abo@exemple.com', 'pwd8007087', 'Chefdepartement'),
-       ('alex','alex@exemple.com', 'pwd4090075', 'Enseignant'),
-       ('barro','barro@exemple.com', 'pwd6875267', 'Responsable');
+insert into utilisateur (prenom, nom, login, password, role)
+values ('ABO','niang', 'abo@exemple.com', 'pwd8007087', 'Chefdepartement'),
+       ('ALEXANDRE','diallo','alex@exemple.com', 'pwd4090075', 'Enseignant'),
+       ('ABDOULAYE','barro','barro@exemple.com', 'pwd6875267', 'Responsable');
 
--- Table des cours
+Table des cours
 CREATE TABLE cours (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom varchar (100) NOT NULL,
     description TEXT,
     Enseignant_id INT,
-    FOREIGN KEY (Enseignant_id) REFERENCES utilisateur(id) -- Correction ici
+    FOREIGN KEY (Enseignant_id) REFERENCES utilisateur(id) 
 );
 
 -- Table des séances
-CREATE TABLE seance (
+ CREATE TABLE seance(
     id INT AUTO_INCREMENT PRIMARY KEY,
     Enseignant_id INT,
     cours_id INT,
@@ -55,30 +56,29 @@ CREATE TABLE seance (
     heure_debut TIME,
     heure_fin TIME,
     contenu TEXT,
-    statut VARCHAR(50) DEFAULT 'en attente',
+    statut ENUM('validee', 'en attente','refusee') DEFAULT 'en attente',
     commentaire_refus TEXT,
     FOREIGN KEY (Enseignant_id) REFERENCES utilisateur(id), 
     FOREIGN KEY (cours_id) REFERENCES cours(id)
 );
 
--- Table de liaison enseignants-cours
+Table de liaison enseignants-cours
 CREATE TABLE enseignants_cours (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_enseignant INT,
     id_cours INT,
     FOREIGN KEY (id_enseignant) REFERENCES utilisateur(id),
     FOREIGN KEY (id_cours) REFERENCES cours(id)
-);
-ALTER TABLE utilisateur ADD COLUMN prenom VARCHAR(100) AFTER id;
-ALTER TABLE seance 
-MODIFY COLUMN statut ENUM('validé', 'non validé') DEFAULT 'non validé';]]></console>
+);]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="f84c7470-a246-48d1-9eec-1d425ba0deea" object-ref="consoles/test" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="f84c7470-a246-48d1-9eec-1d425ba0deea" />

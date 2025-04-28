@@ -612,10 +612,10 @@ public class ValidationSeancesResponsable extends JPanel {
 
         if (confirm == JOptionPane.YES_OPTION) {
             int idSeance = (int) model.getValueAt(row, 0);
-            boolean ok = SeanceDAO.mettreAJourStatut(idSeance, "validée", null);
+            boolean ok = SeanceDAO.mettreAJourStatut(idSeance, "validee", null);
             if (ok) {
                 model.removeRow(row);
-                JOptionPane.showMessageDialog(this, "Séance validée avec succès !");
+                JOptionPane.showMessageDialog(this, "Seance validée avec succès !");
             }
         }
     }
@@ -640,10 +640,10 @@ public class ValidationSeancesResponsable extends JPanel {
 
         if (confirm == JOptionPane.YES_OPTION) {
             int idSeance = (int) model.getValueAt(row, 0);
-            boolean ok = SeanceDAO.mettreAJourStatut(idSeance, "refusée", commentaire);
+            boolean ok = SeanceDAO.mettreAJourStatut(idSeance, "refusee", commentaire);
             if (ok) {
                 model.removeRow(row);
-                JOptionPane.showMessageDialog(this, "Séance refusée avec succès !");
+                JOptionPane.showMessageDialog(this, "Seance refusee avec succès !");
             }
         }
     }
@@ -659,8 +659,8 @@ public class ValidationSeancesResponsable extends JPanel {
                     s.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                     s.getHeureDebut().format(DateTimeFormatter.ofPattern("HH:mm")),
                     s.getContenu(),
-                    "", // Champ commentaire vide initialement
-                    ""  // La colonne Actions sera remplie par le renderer
+                    "",
+                    ""
             });
         }
     }

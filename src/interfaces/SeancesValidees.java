@@ -186,10 +186,10 @@ public class SeancesValidees extends JPanel {
         try (Connection conn = DBconnect.getconnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(
-                     "SELECT s.id, s.dateSeance, s.heureDebut, m.nom AS matiere, " +
+                     "SELECT s.id, s.dateSeance, s.heureDebut, m.nom AS cours, " +
                              "CONCAT(u.nom, ' ', u.prenom) AS enseignant, s.salle " +
                              "FROM seance s " +
-                             "JOIN matiere m ON s.matiere_id = m.id " +
+                             "JOIN cours m ON s.cours_id = m.id " +
                              "JOIN utilisateur u ON s.enseignant_id = u.id " +
                              "WHERE s.statut = 'validee' " +
                              "ORDER BY s.dateSeance DESC")) {
@@ -200,7 +200,7 @@ public class SeancesValidees extends JPanel {
                         rs.getInt("id"),
                         rs.getDate("dateSeance"),
                         rs.getTime("heureDebut"),
-                        rs.getString("matiere"),
+                        rs.getString("cours"),
                         rs.getString("enseignant"),
                         rs.getString("salle")
                 });
@@ -254,18 +254,18 @@ public class SeancesValidees extends JPanel {
         // Panel principal
         JPanel headerPanel = new JPanel(new BorderLayout());
 
-        JLabel titre = new JLabel("Séances validées", SwingConstants.CENTER);
+        JLabel titre = new JLabel("Seances validees", SwingConstants.CENTER);
         titre.setFont(new Font("Arial", Font.BOLD, 18));
         titre.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         headerPanel.add(titre, BorderLayout.NORTH);
 
-        // Panel de recherche et filtres
+        // Panel de recherche
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         filterPanel.setBackground(Color.WHITE);
 
-        // Filtre par matière
+        // Filtre par cours
         filterComboBox = new JComboBox<>();
-        filterComboBox.addItem("Toutes les matières");
+        filterComboBox.addItem("Toutes les cours");
         filterComboBox.addActionListener(e -> filterTable());
 
         // Barre de recherche
@@ -275,7 +275,7 @@ public class SeancesValidees extends JPanel {
         JButton searchButton = new JButton("Rechercher");
         searchButton.addActionListener(e -> filterTable());
 
-        filterPanel.add(new JLabel("Matière: "));
+        filterPanel.add(new JLabel("Cours: "));
         filterPanel.add(filterComboBox);
         filterPanel.add(Box.createHorizontalStrut(20));
         filterPanel.add(new JLabel("Rechercher: "));
@@ -287,7 +287,7 @@ public class SeancesValidees extends JPanel {
 
         // Modèle de table
         model = new DefaultTableModel(
-                new Object[]{"ID", "Date", "Heure", "Matière", "Enseignant", "Contenu"},
+                new Object[]{"ID", "Date", "Heure", "Cours", "Enseignant", "Contenu"},
                 0
         ) {
             @Override
@@ -346,7 +346,7 @@ public class SeancesValidees extends JPanel {
                 if (col == 5) { // Colonne contenu
                     String contenu = (String) model.getValueAt(row, 5);
                     JOptionPane.showMessageDialog(SeancesValidees.this,
-                            contenu, "Contenu de la séance", JOptionPane.INFORMATION_MESSAGE);
+                            contenu, "Contenu de la seance", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -359,32 +359,32 @@ public class SeancesValidees extends JPanel {
     public void chargerSeancesValidees() {
         model.setRowCount(0);
         filterComboBox.removeAllItems();
-        filterComboBox.addItem("Toutes les matières");
+        filterComboBox.addItem("Toutes les cours");
 
         try (Connection conn = DBconnect.getconnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(
-                     "SELECT s.id, s.dateSeance, s.heureDebut, m.nom AS matiere, " +
-                             "CONCAT(u.nom, ' ', u.prenom) AS enseignant, s.contenu " + // Retrait de salle
+                     "SELECT s.id, s.dateSeance, s.heureDebut, m.nom AS cours, " +
+                             "CONCAT(u.nom, ' ', u.prenom) AS enseignant, s.contenu " +
                              "FROM seance s " +
-                             "JOIN matiere m ON s.matiere_id = m.id " +
+                             "JOIN cours m ON s.cours_id = m.id " +
                              "JOIN utilisateur u ON s.enseignant_id = u.id " +
                              "WHERE s.statut = 'validee' " +
                              "ORDER BY s.dateSeance DESC")) {
 
             while (rs.next()) {
-                String matiere = rs.getString("matiere");
+                String cours = rs.getString("cours");
                 model.addRow(new Object[]{
                         rs.getInt("id"),
                         rs.getDate("dateSeance").toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                         rs.getTime("heureDebut").toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")),
-                        matiere,
+                        cours,
                         rs.getString("enseignant"),
                         rs.getString("contenu")
                 });
 
-                if (!matiereExistsInFilter(matiere)) {
-                    filterComboBox.addItem(matiere);
+                if (!coursExistsInFilter(cours)) {
+                    filterComboBox.addItem(cours);
                 }
             }
 
@@ -396,9 +396,9 @@ public class SeancesValidees extends JPanel {
         }
     }
 
-    private boolean matiereExistsInFilter(String matiere) {
+    private boolean coursExistsInFilter(String cours) {
         for (int i = 0; i < filterComboBox.getItemCount(); i++) {
-            if (filterComboBox.getItemAt(i).equals(matiere)) {
+            if (filterComboBox.getItemAt(i).equals(cours)) {
                 return true;
             }
         }
@@ -407,7 +407,7 @@ public class SeancesValidees extends JPanel {
 
     private void filterTable() {
         String searchText = searchField.getText().toLowerCase();
-        String selectedMatiere = (String) filterComboBox.getSelectedItem();
+        String selectedcours = (String) filterComboBox.getSelectedItem();
 
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
@@ -415,8 +415,8 @@ public class SeancesValidees extends JPanel {
         RowFilter<DefaultTableModel, Object> filter = new RowFilter<>() {
             @Override
             public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
-                if (!"Toutes les matières".equals(selectedMatiere) &&
-                        !selectedMatiere.equals(entry.getStringValue(3))) {
+                if (!"Toutes les cours".equals(selectedcours) &&
+                        !selectedcours.equals(entry.getStringValue(3))) {
                     return false;
                 }
 

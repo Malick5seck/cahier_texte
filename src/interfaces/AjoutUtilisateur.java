@@ -350,7 +350,7 @@ public class AjoutUtilisateur extends JPanel {
         setLayout(new GridLayout(6, 2, 5, 10));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Police Arial pour tout l'interface
+        // Police Arial pour l'interface
         Font labelFont = new Font("Arial", Font.BOLD, 20);
         Font fieldFont = new Font("Arial", Font.BOLD, 20);
 
@@ -482,7 +482,7 @@ public class AjoutUtilisateur extends JPanel {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/teste", "root", "")) {
 
             // Vérification de l'existence du login
-            try (PreparedStatement check = conn.prepareStatement("SELECT id FROM utilisateurs WHERE login = ?")) {
+            try (PreparedStatement check = conn.prepareStatement("SELECT id FROM utilisateur WHERE login = ?")) {
                 check.setString(1, login);
                 ResultSet rs = check.executeQuery();
                 if (rs.next()) {
@@ -496,7 +496,7 @@ public class AjoutUtilisateur extends JPanel {
 
             // Insertion du nouvel utilisateur
             try (PreparedStatement pst = conn.prepareStatement(
-                    "INSERT INTO utilisateurs (prenom, nom, login, password, role) VALUES (?, ?, ?, ?, ?)")) {
+                    "INSERT INTO utilisateur (prenom, nom, login, password, role) VALUES (?, ?, ?, ?, ?)")) {
 
                 pst.setString(1, prenom);
                 pst.setString(2, nom);

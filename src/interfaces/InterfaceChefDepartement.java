@@ -3219,7 +3219,7 @@ public class InterfaceChefDepartement extends JFrame {
     private JPanel createHeaderPanel() {
         // Panel principal pour la bande grise
         JPanel greyBandPanel = new JPanel(new BorderLayout());
-        greyBandPanel.setBackground(new Color(240, 240, 240)); // Couleur grise identique à l'interface enseignant
+        greyBandPanel.setBackground(new Color(240, 240, 240));
         greyBandPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         greyBandPanel.setPreferredSize(new Dimension(getWidth(), 60));
 
@@ -3408,14 +3408,14 @@ public class InterfaceChefDepartement extends JFrame {
 
     private void genererEmploiDuTempsPDF() {
         JOptionPane.showMessageDialog(this,
-                "Génération de l'emploi du temps PDF en cours...",
+                "Génération de l'emploi du temps PDF en cours",
                 "Génération PDF",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void genererListeEnseignantsPDF() {
         JOptionPane.showMessageDialog(this,
-                "Génération de la liste des enseignants PDF en cours...",
+                "Génération de la liste des enseignants PDF en cours",
                 "Génération PDF",
                 JOptionPane.INFORMATION_MESSAGE);
     }
@@ -3454,7 +3454,7 @@ public class InterfaceChefDepartement extends JFrame {
     private String getEnseignantsCount() {
         try (Connection conn = DBconnect.getconnection();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT COUNT(*) FROM utilisateurs WHERE role = 'enseignant'")) {
+                     "SELECT COUNT(*) FROM utilisateur WHERE role = 'enseignant'")) {
             ResultSet rs = ps.executeQuery();
             return rs.next() ? rs.getString(1) : "0";
         } catch (SQLException e) {
@@ -3547,7 +3547,7 @@ public class InterfaceChefDepartement extends JFrame {
         try (Connection conn = DBconnect.getconnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(
-                     "SELECT id, nom, prenom, login, role FROM utilisateurs ORDER BY nom, prenom")) {
+                     "SELECT id, nom, prenom, login, role FROM utilisateur ORDER BY nom, prenom")) {
 
             while (rs.next()) {
                 usersTableModel.addRow(new Object[]{
@@ -3598,7 +3598,7 @@ public class InterfaceChefDepartement extends JFrame {
         editPanel.add(loginField);
         editPanel.add(new JLabel("Rôle:"));
         editPanel.add(roleCombo);
-        editPanel.add(new JLabel("Nouveau mot de passe (laisser vide pour ne pas changer):"));
+        editPanel.add(new JLabel("Nouveau mot de passe :"));
         editPanel.add(passwordField);
 
         int result = JOptionPane.showConfirmDialog(
@@ -3620,7 +3620,7 @@ public class InterfaceChefDepartement extends JFrame {
 
     private void updateUserInDatabase(int userId, String nom, String prenom, String login,
                                       String role, char[] password) {
-        String sql = "UPDATE utilisateurs SET nom=?, prenom=?, login=?, role=?";
+        String sql = "UPDATE utilisateur SET nom=?, prenom=?, login=?, role=?";
         boolean changePassword = password.length > 0;
 
         if (changePassword) {
@@ -3685,7 +3685,7 @@ public class InterfaceChefDepartement extends JFrame {
         if (confirm == JOptionPane.YES_OPTION) {
             try (Connection conn = DBconnect.getconnection();
                  PreparedStatement pstmt = conn.prepareStatement(
-                         "DELETE FROM utilisateurs WHERE id = ?")) {
+                         "DELETE FROM utilisateur WHERE id = ?")) {
 
                 pstmt.setInt(1, userId);
                 int rowsAffected = pstmt.executeUpdate();
