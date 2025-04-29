@@ -3260,7 +3260,7 @@ public class InterfaceEnseignant extends JFrame {
     private void chargerCours() {
         coursCombo.removeAllItems();
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/teste", "root", "");
-             PreparedStatement stmt = conn.prepareStatement("SELECT nom FROM cours WHERE enseignant_id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT nom FROM cours WHERE Enseignant_id = ?")) {
             stmt.setInt(1, enseignantId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -3284,7 +3284,7 @@ public class InterfaceEnseignant extends JFrame {
         }
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/teste", "root", "")) {
-            PreparedStatement coursStmt = conn.prepareStatement("SELECT id FROM cours WHERE nom = ? AND enseignant_id = ?");
+            PreparedStatement coursStmt = conn.prepareStatement("SELECT id FROM cours WHERE nom = ? AND Enseignant_id = ?");
             coursStmt.setString(1, coursNom);
             coursStmt.setInt(2, enseignantId);
             ResultSet rs = coursStmt.executeQuery();
@@ -3293,8 +3293,9 @@ public class InterfaceEnseignant extends JFrame {
                 int coursId = rs.getInt("id");
 
                 PreparedStatement insert = conn.prepareStatement(
-                        "INSERT INTO seance (cours_id, enseignant_id, date_seance, heure_debut, heure_fin, contenu, statut) " +
-                                "VALUES (?, ?, ?, ?, ?, ?, 'non validée')");
+                        "INSERT INTO seance (cours_id, Enseignant_id, dateseance, heure_debut, heure_fin, contenu) " +
+                                "VALUES (?, ?, ?, ?, ?, ?)"
+                );
                 insert.setInt(1, coursId);
                 insert.setInt(2, enseignantId);
                 insert.setString(3, date);
@@ -3319,15 +3320,16 @@ public class InterfaceEnseignant extends JFrame {
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/teste", "root", "");
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT s.id, c.nom AS cours, s.date_seance, s.heure_debut, s.heure_fin, s.statut, s.commentaire_refus " +
+                     "SELECT s.id, c.nom AS cours, s.dateseance, s.heure_debut, s.heure_fin, s.statut, s.commentaire_refus " +
                              "FROM seance s JOIN cours c ON s.cours_id = c.id " +
-                             "WHERE s.enseignant_id = ? ORDER BY s.date_seance DESC")) {
+                             "WHERE s.Enseignant_id = ? ORDER BY s.dateseance DESC"
+             )) {
             stmt.setInt(1, enseignantId);
             ResultSet result = stmt.executeQuery();
 
             while (result.next()) {
                 String cours = result.getString("cours");
-                String date = result.getString("date_seance");
+                String date = result.getString("dateseance");
                 String debut = result.getString("heure_debut");
                 String fin = result.getString("heure_fin");
                 String statut = result.getString("statut");

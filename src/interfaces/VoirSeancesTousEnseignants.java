@@ -514,23 +514,12 @@ public class VoirSeancesTousEnseignants extends JPanel {
         filterPanel.add(filterCombo);
         filterPanel.add(refreshBtn);
 
-        // Panel de recherche
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        searchField = new JTextField(20);
-        JButton searchBtn = new JButton("Rechercher");
-        searchBtn.addActionListener(e -> applyFilters());
-
-        searchPanel.add(new JLabel("Rechercher:"));
-        searchPanel.add(searchField);
-        searchPanel.add(searchBtn);
-
         // Panel d'actions
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         JButton exportBtn = createActionButton("Exporter", Color.BLUE, e -> exporterCSV());
         actionPanel.add(exportBtn);
 
         controlPanel.add(filterPanel, BorderLayout.WEST);
-        controlPanel.add(searchPanel, BorderLayout.CENTER);
         controlPanel.add(actionPanel, BorderLayout.EAST);
 
         add(controlPanel, BorderLayout.NORTH);

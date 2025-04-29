@@ -336,8 +336,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
 import java.sql.*;
 
 public class AjoutUtilisateur extends JPanel {
@@ -475,8 +474,8 @@ public class AjoutUtilisateur extends JPanel {
             return;
         }
 
-        // Hachage du mot de passe
-        String hashedPassword = hashPassword(password);
+
+
 
         // Connexion à la base de données
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/teste", "root", "")) {
@@ -501,7 +500,6 @@ public class AjoutUtilisateur extends JPanel {
                 pst.setString(1, prenom);
                 pst.setString(2, nom);
                 pst.setString(3, login);
-                pst.setString(4, hashedPassword);
                 pst.setString(5, role);
 
                 int result = pst.executeUpdate();
@@ -530,17 +528,6 @@ public class AjoutUtilisateur extends JPanel {
         prenomField.requestFocusInWindow();
     }
 
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashed = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashed) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Erreur de hachage", e);
-        }
-    }
+
+
 }

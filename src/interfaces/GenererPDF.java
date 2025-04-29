@@ -4,6 +4,7 @@ import net.miginfocom.swing.MigLayout;
 import DBO.DBconnect;
 
 import javax.swing.*;
+import javax.swing.text.Document;
 import java.sql.*;
 import java.util.HashMap;
 import java.io.FileOutputStream;
@@ -44,8 +45,8 @@ public class GenerationPDF extends JDialog {
     }
 
     private void chargerCours() {
-        try (Connection conn = DBConnection.getConnection()) {
-            String sql = "SELECT id, name FROM courses";
+        try (Connection conn =  DBconnect.getconnection()) {
+            String sql = "SELECT id, name FROM cours";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
@@ -62,7 +63,7 @@ public class GenerationPDF extends JDialog {
 
     private String getNomEnseignant(int courseId) {
         String nom = "";
-        try (Connection conn = DBConnect.getConnection()) {
+        try (Connection conn =  DBconnect.getconnection()) {
             String sql = "SELECT u.username FROM users u JOIN courses c ON u.id = c.teacher_id WHERE c.id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, courseId);
@@ -85,7 +86,7 @@ public class GenerationPDF extends JDialog {
         ficheArea.append("FICHE PÉDAGOGIQUE - " + cours + "\n");
         ficheArea.append("Enseignant : " + enseignant + "\n\n");
 
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection conn = DBconnect.getconnection()) {
             String sql = "SELECT date, content, validated FROM sessions WHERE course_id = ? ORDER BY date ASC";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, courseId);
@@ -95,7 +96,7 @@ public class GenerationPDF extends JDialog {
                 String date = rs.getString("date");
                 String content = rs.getString("content");
                 boolean validated = rs.getBoolean("validated");
-                ficheArea.append(date + " : " + content + (validated ? " [Validée]" : " [Non validée]") + "\n");
+                ficheArea.append(date + " : " + content + (validated ? " [Validee]" : " [refusee]") + "\n");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,8 +115,8 @@ public class GenerationPDF extends JDialog {
         int option = chooser.showSaveDialog(this);
 
         if (option == JFileChooser.APPROVE_OPTION) {
-            try (Connection conn = DBConnection.getConnection()) {
-                String sql = "SELECT date, content, validated FROM sessions WHERE course_id = ? ORDER BY date ASC";
+            try (Connection conn = DBconnect.getconnection()) {
+                String sql = "SELECT date, content, validated FROM seance WHERE cours_id = ? ORDER BY date ASC";
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 stmt.setInt(1, courseId);
                 ResultSet rs = stmt.executeQuery();
@@ -145,11 +146,14 @@ public class GenerationPDF extends JDialog {
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new GenerationPDF(JFrame parent ).setVisible(true);
+            new GenerationPDF(null ).setVisible(true);
         });
     }
 }
 
 
-
  */
+
+
+
+

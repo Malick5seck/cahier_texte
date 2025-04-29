@@ -76,9 +76,7 @@ CREATE TABLE enseignants_cours (
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="f84c7470-a246-48d1-9eec-1d425ba0deea" object-ref="consoles/test" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="f84c7470-a246-48d1-9eec-1d425ba0deea" />

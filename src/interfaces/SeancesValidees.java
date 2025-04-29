@@ -364,20 +364,20 @@ public class SeancesValidees extends JPanel {
         try (Connection conn = DBconnect.getconnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(
-                     "SELECT s.id, s.dateSeance, s.heureDebut, m.nom AS cours, " +
+                     "SELECT s.id, s.dateseance, s.heure_debut, m.nom AS cours, " +
                              "CONCAT(u.nom, ' ', u.prenom) AS enseignant, s.contenu " +
                              "FROM seance s " +
                              "JOIN cours m ON s.cours_id = m.id " +
-                             "JOIN utilisateur u ON s.enseignant_id = u.id " +
+                             "JOIN utilisateur u ON s.Enseignant_id = u.id " +
                              "WHERE s.statut = 'validee' " +
-                             "ORDER BY s.dateSeance DESC")) {
+                             "ORDER BY s.dateseance DESC")) {
 
             while (rs.next()) {
                 String cours = rs.getString("cours");
                 model.addRow(new Object[]{
                         rs.getInt("id"),
-                        rs.getDate("dateSeance").toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        rs.getTime("heureDebut").toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")),
+                        rs.getDate("dateseance").toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        rs.getTime("heure_debut").toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")),
                         cours,
                         rs.getString("enseignant"),
                         rs.getString("contenu")

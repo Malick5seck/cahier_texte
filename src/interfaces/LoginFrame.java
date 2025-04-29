@@ -1000,7 +1000,7 @@ public class LoginFrame extends JFrame {
     public LoginFrame() {
         setTitle("CAHIER DE TEXTE");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 650);
+        setSize(900, 655);
         setLocationRelativeTo(null);
 
         // Panel principal
@@ -1082,8 +1082,8 @@ public class LoginFrame extends JFrame {
         JPanel loginPanel = new JPanel(new GridBagLayout());
         loginPanel.setBackground(Color.WHITE);
 
-        JLabel loginLabel = new JLabel("   Login:");
-        loginLabel.setFont(new Font("Arial", Font.BOLD, 12)); // taille augmentée
+        JLabel loginLabel = new JLabel("     Login:");
+        loginLabel.setFont(new Font("Arial", Font.BOLD, 12));
         loginField = new JTextField(20);
         loginField.setPreferredSize(new Dimension(200, 30));
         loginField.setMaximumSize(new Dimension(200, 30));
@@ -1105,7 +1105,7 @@ public class LoginFrame extends JFrame {
         passwordPanel.setBackground(Color.WHITE);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 12)); // taille augmentée
+        passwordLabel.setFont(new Font("Arial", Font.BOLD, 12));
         passwordField = new JPasswordField(20);
         passwordField.setPreferredSize(new Dimension(200, 30));
         passwordField.setMaximumSize(new Dimension(200, 30));
@@ -1127,7 +1127,7 @@ public class LoginFrame extends JFrame {
         buttonPanel.setBackground(Color.WHITE);
 
         JButton loginButton = new JButton("Se connecter");
-        loginButton.setFont(new Font("Arial", Font.BOLD, 14)); // taille augmentée
+        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
         styleButton(loginButton, new Color(0, 102, 204), Color.WHITE);
         loginButton.addActionListener(e -> Connecter());
 
@@ -1212,7 +1212,6 @@ public class LoginFrame extends JFrame {
 
         String login = loginField.getText().trim();
         String password = String.valueOf(passwordField.getPassword()).trim();
-        String hashedPassword = hashPassword(password);
 
         try (Connection connection = DBconnect.getconnection()) {
             statusLabel.setText("Connexion à la base");
@@ -1223,10 +1222,10 @@ public class LoginFrame extends JFrame {
             ResultSet resultat = statement.executeQuery();
 
             if (resultat.next()) {
-                String storedHashedPassword = resultat.getString("password");
+                String storedPassword = resultat.getString("password");
                 String role = resultat.getString("role");
 
-                if (storedHashedPassword.equals(hashedPassword)) {
+                if (storedPassword.equals(password)) {
                     statusLabel.setForeground(new Color(0, 150, 0));
                     statusLabel.setText("Connexion réussie (" + role + ")");
                     dispose();
@@ -1260,22 +1259,6 @@ public class LoginFrame extends JFrame {
             statusLabel.setForeground(Color.RED);
             statusLabel.setText("Erreur de connexion à la base de données.");
             ex.printStackTrace();
-        }
-    }
-
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashed = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashed) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            statusLabel.setForeground(Color.RED);
-            statusLabel.setText("Erreur de hachage");
-            return null;
         }
     }
 

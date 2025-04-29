@@ -523,7 +523,7 @@ public class ValidationSeancesResponsable extends JPanel {
         }, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 5; // Seul le commentaire est éditable
+                return column == 5;
             }
         };
 
@@ -531,12 +531,12 @@ public class ValidationSeancesResponsable extends JPanel {
         table = new JTable(model) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                if (column == 6) { // Colonne Actions
+                if (column == 6) {
                     return createActionButtons(row);
                 }
-                Component c = super.prepareRenderer(renderer, row, column);
-                c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(240, 240, 240));
-                return c;
+                Component cont = super.prepareRenderer(renderer, row, column);
+                cont.setBackground(row % 2 == 0 ? Color.WHITE : new Color(240, 240, 240));
+                return cont;
             }
         };
 

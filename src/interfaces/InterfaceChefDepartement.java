@@ -3179,7 +3179,7 @@ public class InterfaceChefDepartement extends JFrame {
         appState.put("currentUser", currentUser);
         initializeUI();
         initComponents();
-        setupEventHandlers();
+
     }
 
     public InterfaceChefDepartement() {
@@ -3443,7 +3443,9 @@ public class InterfaceChefDepartement extends JFrame {
     private String getSeancesCount() {
         try (Connection conn = DBconnect.getconnection();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT COUNT(*) FROM seance WHERE dateseance BETWEEN CURRENT_DATE AND CURRENT_DATE + 7")) {
+                     "SELECT COUNT(*) \n" +
+                             "FROM seance \n" +
+                             "WHERE dateseance BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY);\n")) {
             ResultSet rs = ps.executeQuery();
             return rs.next() ? rs.getString(1) : "0";
         } catch (SQLException e) {
@@ -3506,7 +3508,7 @@ public class InterfaceChefDepartement extends JFrame {
                 return column == 5;
             }
         };
-        usersTableModel.setColumnIdentifiers(new String[]{"ID", "Nom", "Prénom", "Login", "Rôle", "Actions"});
+        usersTableModel.setColumnIdentifiers(new String[]{"ID", "Nom", "Prénom", "Login", "Rôle"});
 
         JTable usersTable = new JTable(usersTableModel);
         usersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -3556,7 +3558,7 @@ public class InterfaceChefDepartement extends JFrame {
                         rs.getString("prenom"),
                         rs.getString("login"),
                         rs.getString("role"),
-                        "Actions"
+
                 });
             }
         } catch (SQLException e) {
@@ -3637,9 +3639,6 @@ public class InterfaceChefDepartement extends JFrame {
             pstmt.setString(4, role);
 
             if (changePassword) {
-                pstmt.setString(5, hashPassword(new String(password)));
-                pstmt.setInt(6, userId);
-            } else {
                 pstmt.setInt(5, userId);
             }
 
@@ -3704,14 +3703,7 @@ public class InterfaceChefDepartement extends JFrame {
         }
     }
 
-    private void setupEventHandlers() {
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                // Gestion facultative de la fermeture
-            }
-        });
-    }
+
 
     private void showPanel(String panelName) {
         cardLayout.show(contentPanel, panelName);
@@ -3739,19 +3731,7 @@ public class InterfaceChefDepartement extends JFrame {
         }
     }
 
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashed = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashed) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Erreur de hachage", e);
-        }
-    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

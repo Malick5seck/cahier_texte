@@ -294,7 +294,7 @@ public class AssignerCours extends JPanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton btnAssigner = createActionButton("Assigner", Color.BLUE, e -> assignerCours());
-        JButton btnRafraichir = createActionButton("Rafraîchir", Color.GRAY, e -> rafraichirDonnees());
+        JButton btnRafraichir = createActionButton("Actualiser", Color.GRAY, e -> rafraichirDonnees());
 
         buttonPanel.add(btnAssigner);
         buttonPanel.add(btnRafraichir);
@@ -311,7 +311,8 @@ public class AssignerCours extends JPanel {
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(
                      "SELECT id, CONCAT(prenom, ' ', nom) AS nom_complet " +
-                             "FROM utilisateur WHERE role = 'enseignant'")) {
+                             "FROM utilisateur WHERE role = 'Enseignant'"
+             )) {
 
             while (rs.next()) {
                 enseignantsMap.put(rs.getString("nom_complet"), rs.getInt("id"));
@@ -332,7 +333,8 @@ public class AssignerCours extends JPanel {
                      "SELECT c.id, c.nom, GROUP_CONCAT(u.login SEPARATOR ', ') AS enseignants " +
                              "FROM cours c LEFT JOIN enseignants_cours ec ON c.id = ec.id_cours " +
                              "LEFT JOIN utilisateur u ON ec.id_enseignant = u.id " +
-                             "GROUP BY c.id, c.nom ORDER BY c.nom")) {
+                             "GROUP BY c.id, c.nom ORDER BY c.nom"
+             )) {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
