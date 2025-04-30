@@ -3153,8 +3153,6 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -3402,22 +3400,12 @@ public class InterfaceChefDepartement extends JFrame {
         });
     }
 
-    private void genererPDF() {
-        cardLayout.show(contentPanel, "genererpdf");
-    }
-
     private void genererEmploiDuTempsPDF() {
-        JOptionPane.showMessageDialog(this,
-                "Génération de l'emploi du temps PDF en cours",
-                "Génération PDF",
-                JOptionPane.INFORMATION_MESSAGE);
+        GenererPDF.genererEmploiDuTempsPDF(this);
     }
 
     private void genererListeEnseignantsPDF() {
-        JOptionPane.showMessageDialog(this,
-                "Génération de la liste des enseignants PDF en cours",
-                "Génération PDF",
-                JOptionPane.INFORMATION_MESSAGE);
+        GenererPDF.genererListeEnseignantsPDF(this);
     }
 
     private JPanel createDashboardPanel() {

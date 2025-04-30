@@ -69,14 +69,30 @@ CREATE TABLE enseignants_cours (
     id_cours INT,
     FOREIGN KEY (id_enseignant) REFERENCES utilisateur(id),
     FOREIGN KEY (id_cours) REFERENCES cours(id)
-);]]></console>
+);
+
+INSERT INTO cours (nom, description) VALUES
+('Programmation Orientee Objet', 'Cours sur les principes de l oriente objet en java '),
+('Securite', 'Introduction aux concepts de la cybersecurite'),
+('PHP', 'Developpement web cote serveur avec PHP'),
+('Base de Donnees', 'Modelisation et requêtes sql avec MySQL'),
+('Merise', 'Methodologie de conception de base de donnees'),
+('Gestion de Projet', 'Methodes de gestion de projet (planning, budget, etc.)'),
+('Developpement Personnel', 'Competences humaines et communication'),
+('Reseau', 'Principes de base des reseaux informatiques'),
+('Anglais', 'Anglais technique et communication en informatique'),
+('ACSOO', 'Analyse et Conception des Systemes Orientes Objets');
+
+SELECT * FROM cours;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="f84c7470-a246-48d1-9eec-1d425ba0deea" object-ref="consoles/test" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="f84c7470-a246-48d1-9eec-1d425ba0deea" />
