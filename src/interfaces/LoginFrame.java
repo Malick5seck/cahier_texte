@@ -986,6 +986,7 @@ package interfaces;
 
 import DBO.DBconnect;
 import javax.swing.*;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.sql.*;
 import java.security.MessageDigest;
@@ -1262,7 +1263,8 @@ public class LoginFrame extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
+        UIManager.setLookAndFeel(new NimbusLookAndFeel());
         SwingUtilities.invokeLater(() -> {
             new LoginFrame().setVisible(true);
         });

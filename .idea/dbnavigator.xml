@@ -38,7 +38,7 @@ values ('ABO','niang', 'abo@exemple.com', 'pwd8007087', 'Chefdepartement'),
        ('ALEXANDRE','diallo','alex@exemple.com', 'pwd4090075', 'Enseignant'),
        ('ABDOULAYE','barro','barro@exemple.com', 'pwd6875267', 'Responsable');
 
-Table des cours
+--Table des cours
 CREATE TABLE cours (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom varchar (100) NOT NULL,
@@ -62,13 +62,13 @@ CREATE TABLE cours (
     FOREIGN KEY (cours_id) REFERENCES cours(id)
 );
 
-Table de liaison enseignants-cours
+--Table de liaison enseignants-cours
 CREATE TABLE enseignants_cours (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_enseignant INT,
-    id_cours INT,
-    FOREIGN KEY (id_enseignant) REFERENCES utilisateur(id),
-    FOREIGN KEY (id_cours) REFERENCES cours(id)
+    Enseignant_id INT,
+    cours_id INT,
+    FOREIGN KEY (Enseignant_id) REFERENCES utilisateur(id),
+    FOREIGN KEY (cours_id) REFERENCES cours(id)
 );
 
 INSERT INTO cours (nom, description) VALUES
@@ -83,7 +83,8 @@ INSERT INTO cours (nom, description) VALUES
 ('Anglais', 'Anglais technique et communication en informatique'),
 ('ACSOO', 'Analyse et Conception des Systemes Orientes Objets');
 
-SELECT * FROM cours;]]></console>
+SELECT * FROM cours;
+SELECT * FROM enseignants_cours;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">

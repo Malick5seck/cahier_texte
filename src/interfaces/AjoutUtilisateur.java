@@ -145,7 +145,7 @@ public class AjoutUtilisateur extends JFrame {
 
         String hashedPassword = hashPassword(password);
 
-        String sql = "SELECT * FROM enseignants_cours WHERE id_enseignant = ? AND id_cours = ?";
+        String sql = "SELECT * FROM enseignants_cours WHERE Enseignant_id = ? AND cours_id = ?";
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/teste", "root", "");
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -343,6 +343,7 @@ public class AjoutUtilisateur extends JPanel {
     private JComboBox<String> typeCombo;
     private JTextField prenomField, nomField, loginField;
     private JPasswordField passwordField;
+    private String motdepasse;
 
     public AjoutUtilisateur() {
         // Configuration du layout principal
@@ -374,6 +375,7 @@ public class AjoutUtilisateur extends JPanel {
         // Champ Mot de passe
         add(createLabel("Mot de passe :", labelFont));
         passwordField = new JPasswordField();
+        passwordField.setPreferredSize(new Dimension(getWidth() , 45));
         passwordField.setFont(fieldFont);
         passwordField.setBorder(BorderFactory.createCompoundBorder(
                 passwordField.getBorder(),
@@ -495,11 +497,13 @@ public class AjoutUtilisateur extends JPanel {
 
             // Insertion du nouvel utilisateur
             try (PreparedStatement pst = conn.prepareStatement(
-                    "INSERT INTO utilisateur (prenom, nom, login, password, role) VALUES (?, ?, ?, ?, ?)")) {
+                    "INSERT INTO utilisateur (prenom, nom, login, `password`, role) VALUES (?, ?, ?, ?, ?)"
+            )) {
 
                 pst.setString(1, prenom);
                 pst.setString(2, nom);
                 pst.setString(3, login);
+                pst.setString(4,password);
                 pst.setString(5, role);
 
                 int result = pst.executeUpdate();

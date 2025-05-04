@@ -10,176 +10,273 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.VerticalAlignment;
 import DBO.DBconnect;
+import com.itextpdf.layout.property.UnitValue;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+
 public class GenererPDF {
 
+    // Formats et configurations constants
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final float[] COLUMN_WIDTHS = {2, 2, 3, 3, 2}; // Largeurs des colonnes du tableau emploi du temps
+    private static final float[] COLUMN_WIDTHS_EDT = {2, 2, 3, 3};
+    private static final float[] COLUMN_WIDTHS_ENS = {3, 3, 4};
+    private static final DeviceRgb COULEUR_ENTETE = new DeviceRgb(220, 220, 220);
+    private static final DeviceRgb COULEUR_ALTERNANCE = new DeviceRgb(240, 240, 240);
 
-    // Génère le PDF de l'emploi du temps des 30 prochains jours
+    // Point d'entrée principal du programme
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                configurerApparence();
+                JFrame frame = creerFenetreInvisible();
+                afficherMenuPrincipal(frame);
+            } catch (Exception e) {
+                afficherErreur("Erreur initiale", e);
+            }
+        });
+    }
+
+
+    // methode pour le PDF d'emploi du temps
+
     public static void genererEmploiDuTempsPDF(Window parent) {
-        File file = choisirFichier(parent, "EmploiDuTemps");
-        if (file == null) return;
+        File fichier = choisirFichier(parent, "EmploiDuTemps");
+        if (fichier == null) return;
 
-        try (PdfWriter writer = new PdfWriter(file);
+        try (PdfWriter writer = new PdfWriter(fichier);
              PdfDocument pdf = new PdfDocument(writer);
              Document document = new Document(pdf)) {
 
-            // En-tête du document
-            ajouterEnTete(document, "EMPLOI DU TEMPS ");
+            // Configuration du document
+            ajouterEnTeteDocument(document, "EMPLOI DU TEMPS");
+            ajouterPeriode(document);
 
-            Table table = new Table(COLUMN_WIDTHS);
-            table.setWidth(100);
+            // Création du tableau
+            Table tableau = creerTableauEDT();
+            int nbSeances = remplirTableauEDT(tableau);
+            document.add(tableau);
 
-            // En-tête du tableau
-            ajouterCelluleEnTete(table, "Date");
-            ajouterCelluleEnTete(table, "Heure");
-            ajouterCelluleEnTete(table, "Cours");
-            ajouterCelluleEnTete(table, "Enseignant");
-
-
-            try (Connection conn = DBconnect.getconnection();
-                 PreparedStatement ps = conn.prepareStatement(
-                         "SELECT s.dateseance, s.heure_debut, s.heure_fin, c.nom AS cours, " +
-                                 "CONCAT(u.prenom, ' ', u.nom) AS enseignant " +
-                                 "FROM seance s " +
-                                 "JOIN cours c ON s.cours_id = c.id " +
-                                 "JOIN utilisateur u ON s.Enseignant_id = u.id " +
-                                 "WHERE s.dateseance BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY) " +
-                                 "ORDER BY s.dateseance, s.heure_debut"
-                 );
-            ) {
-
-                ResultSet rs = ps.executeQuery();
-                boolean alternate = false;
-
-                // Parcours des résultats pour remplir le tableau
-                while (rs.next()) {
-                    ajouterCelluleContenu(table, rs.getDate("dateseance").toLocalDate().format(DATE_FORMAT), alternate);
-                    ajouterCelluleContenu(table, rs.getTime("heure_debut") + " - " + rs.getTime("heure_fin"), alternate); // Correction ici
-                    ajouterCelluleContenu(table, rs.getString("cours"), alternate);
-                    ajouterCelluleContenu(table, rs.getString("enseignant"), alternate);
-                    alternate = !alternate;
-                }
+            if (nbSeances == 0) {
+                ajouterMessageAucuneDonnee(document, "Aucun cours prévu cette semaine");
             }
 
-            document.add(table);
             ajouterPiedDePage(document);
-            ouvrirPDF(parent, file);
+            ouvrirPDF(parent, fichier);
 
-        } catch (SQLException | IOException e) {
-            afficherErreur(parent, "Erreur lors de la génération du PDF", e);
+        } catch (Exception e) {
+            gérerErreurGeneration(parent, e);
         }
     }
 
-    // Génère le PDF de la liste des enseignants
-    public static void genererListeEnseignantsPDF(Window parent) {
-        File file = choisirFichier(parent, "ListeEnseignants");
-        if (file == null) return;
+    // methode pour le PDF de la liste des Enseignants
 
-        try (PdfWriter writer = new PdfWriter(file);
+    public static void genererListeEnseignantsPDF(Window parent) {
+        File fichier = choisirFichier(parent, "ListeEnseignants");
+        if (fichier == null) return;
+
+        try (PdfWriter writer = new PdfWriter(fichier);
              PdfDocument pdf = new PdfDocument(writer);
              Document document = new Document(pdf)) {
 
-            ajouterEnTete(document, "LISTE DES ENSEIGNANTS");
+            ajouterEnTeteDocument(document, "LISTE DES ENSEIGNANTS");
+            ajouterDateGeneration(document);
 
-            int totalEnseignants = compterEnseignants();
-            document.add(new Paragraph("Nombre total d'enseignants : " + totalEnseignants)
-                    .setTextAlignment(TextAlignment.LEFT)
+            int nbEnseignants = compterEnseignants();
+            document.add(new Paragraph("Nombre total d'Enseignants : " + nbEnseignants)
                     .setMarginBottom(15));
 
-            Table table = new Table(new float[]{3, 3, 4});
-            table.setWidth(100);
-
-            ajouterCelluleEnTete(table, "Nom");
-            ajouterCelluleEnTete(table, "Prénom");
-            ajouterCelluleEnTete(table, "Login");
-
-            try (Connection conn = DBconnect.getconnection();
-                 PreparedStatement ps = conn.prepareStatement(
-                         "SELECT nom, prenom, login FROM utilisateur " +
-                                 "WHERE role = 'Enseignant' ORDER BY nom, prenom"
-                 );
-            ) {
-
-                ResultSet rs = ps.executeQuery();
-                boolean alternate = false;
-                while (rs.next()) {
-                    ajouterCelluleContenu(table, rs.getString("nom"), alternate);
-                    ajouterCelluleContenu(table, rs.getString("prenom"), alternate);
-                    ajouterCelluleContenu(table, rs.getString("login"), alternate);
-                    alternate = !alternate;
-                }
+            if (nbEnseignants > 0) {
+                Table tableau = creerTableauEnseignants();
+                remplirTableauEnseignants(tableau);
+                document.add(tableau);
+            } else {
+                ajouterMessageAucuneDonnee(document, "Aucun Enseignant trouvé");
             }
 
-            document.add(table);
             ajouterPiedDePage(document);
-            ouvrirPDF(parent, file);
+            ouvrirPDF(parent, fichier);
 
-        } catch (SQLException | IOException e) {
-            afficherErreur(parent, "Erreur lors de la génération du PDF", e);
+        } catch (Exception e) {
+            gérerErreurGeneration(parent, e);
         }
     }
 
-    // Ajoute un en-tête avec le titre et la date
-    private static void ajouterEnTete(Document document, String titre) {
-        Paragraph p = new Paragraph(titre)
+    // les Méthodes d'initialisation
+
+    private static void configurerApparence() throws Exception {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    }
+
+    private static JFrame creerFenetreInvisible() {
+        JFrame frame = new JFrame();
+        frame.setUndecorated(true);
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+        return frame;
+    }
+
+    // les Méthodes de menu
+
+    private static void afficherMenuPrincipal(Window parent) {
+        String[] options = {
+                "Générer l'emploi du temps",
+                "Générer la liste des Enseignants",
+                "Quitter"
+        };
+
+        int choix = JOptionPane.showOptionDialog(
+                parent,
+                "Sélectionnez l'option souhaitée:",
+                "Générateur PDF",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        traiterChoixMenu(parent, choix);
+    }
+
+    private static void traiterChoixMenu(Window parent, int choix) {
+        switch (choix) {
+            case 0 -> genererEmploiDuTempsPDF(parent);
+            case 1 -> genererListeEnseignantsPDF(parent);
+            default -> System.exit(0);
+        }
+    }
+
+    // Méthodes pour la generation PDF
+
+    private static Table creerTableauEDT() {
+        Table tableau = new Table(UnitValue.createPercentArray(new float[]{20f, 20f, 30f, 30f}));
+        tableau.setWidth(UnitValue.createPercentValue(100));
+        ajouterCelluleEnTete(tableau, "Date");
+        ajouterCelluleEnTete(tableau, "Heure");
+        ajouterCelluleEnTete(tableau, "Cours");
+        ajouterCelluleEnTete(tableau, "Enseignant");
+        return tableau;
+    }
+
+
+    private static Table creerTableauEnseignants() {
+        Table tableau = new Table(UnitValue.createPercentArray(new float[]{20f, 30f, 50f}));
+
+        tableau.setWidth(UnitValue.createPercentValue(100));
+        ajouterCelluleEnTete(tableau, "Nom");
+        ajouterCelluleEnTete(tableau, "Prénom");
+        ajouterCelluleEnTete(tableau, "Login");
+        return tableau;
+    }
+
+    private static void ajouterEnTeteDocument(Document doc, String titre) {
+        doc.add(new Paragraph(titre)
                 .setTextAlignment(TextAlignment.CENTER)
                 .setFontSize(18)
-                .setBold()
-                .setMarginBottom(5);
-        document.add(p);
-
-        document.add(new Paragraph("Généré le " + LocalDate.now().format(DATE_FORMAT))
-                .setTextAlignment(TextAlignment.CENTER)
-                .setFontSize(10)
-                .setItalic()
-                .setMarginBottom(20));
+                .setBold());
     }
 
-
-    private static void ajouterCelluleEnTete(Table table, String texte) {
-        Cell cell = new Cell()
-                .add(new Paragraph(texte).setBold())
-                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setTextAlignment(TextAlignment.CENTER)
-                .setVerticalAlignment(VerticalAlignment.MIDDLE);
-        table.addHeaderCell(cell);
+    private static void ajouterPeriode(Document doc) {
+        LocalDate aujourdhui = LocalDate.now();
+        doc.add(new Paragraph("Période du " + aujourdhui.format(DATE_FORMAT) + " au "
+                + aujourdhui.plusDays(7).format(DATE_FORMAT))
+                .setTextAlignment(TextAlignment.CENTER));
     }
 
-    private static void ajouterCelluleContenu(Table table, String texte, boolean alternate) {
-        Cell cell = new Cell()
-                .add(new Paragraph(texte))
-                .setBackgroundColor(alternate ? ColorConstants.WHITE : new DeviceRgb(240, 240, 240))
-                .setPadding(5)
-                .setTextAlignment(TextAlignment.LEFT)
-                .setVerticalAlignment(VerticalAlignment.MIDDLE);
-        table.addCell(cell);
-    }
-
-    // Pied de page informatif
-    private static void ajouterPiedDePage(Document document) {
-        document.add(new Paragraph("\n"));
-        document.add(new Paragraph("Document généré par l'application de gestion du cahier de texte")
+    private static void ajouterDateGeneration(Document doc) {
+        doc.add(new Paragraph("Généré le " + LocalDate.now().format(DATE_FORMAT))
                 .setTextAlignment(TextAlignment.CENTER)
-                .setFontSize(8)
                 .setItalic());
     }
 
-    // Compte du nombre total d'enseignants
+    private static void ajouterMessageAucuneDonnee(Document doc, String message) {
+        doc.add(new Paragraph(message)
+                .setFontColor(ColorConstants.RED)
+                .setTextAlignment(TextAlignment.CENTER));
+    }
+
+    private static void ajouterPiedDePage(Document doc) {
+        doc.add(new Paragraph("\n"));
+        doc.add(new Paragraph("Document généré par l'application cahier de texte")
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFontSize(11)
+                .setItalic());
+    }
+
+    // Méthodes de données
+
+    private static int remplirTableauEDT(Table tableau) throws SQLException {
+        int nbLignes = 0;
+        boolean alternance = false;
+
+        try (Connection conn = DBconnect.getconnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT s.dateseance, s.heure_debut, s.heure_fin, c.nom AS cours, " +
+                             "CONCAT(u.prenom, ' ', u.nom) AS Enseignant " +
+                             "FROM seance s " +
+                             "JOIN cours c ON s.cours_id = c.id " +
+                             "JOIN utilisateur u ON s.Enseignant_id = u.id " +
+                             "WHERE s.dateseance BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY) " +
+                             "ORDER BY s.dateseance, s.heure_debut")) {
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                nbLignes++;
+                ajouterLigneEDT(tableau, rs, alternance);
+                alternance = !alternance;
+            }
+        }
+        return nbLignes;
+    }
+
+    private static void ajouterLigneEDT(Table tableau, ResultSet rs, boolean alternance) throws SQLException {
+        String date = formaterDate(rs.getDate("dateseance"));
+        String heure = formaterHeure(rs.getTime("heure_debut"), rs.getTime("heure_fin"));
+        String cours = getStringSafe(rs, "cours");
+        String Enseignant = getStringSafe(rs, "Enseignant");
+
+        ajouterCelluleContenu(tableau, date, alternance);
+        ajouterCelluleContenu(tableau, heure, alternance);
+        ajouterCelluleContenu(tableau, cours, alternance);
+        ajouterCelluleContenu(tableau, Enseignant, alternance);
+    }
+
+    private static void remplirTableauEnseignants(Table tableau) throws SQLException {
+        boolean alternance = false;
+
+        try (Connection conn = DBconnect.getconnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT nom, prenom, login FROM utilisateur " +
+                             "WHERE role = 'Enseignant' ORDER BY nom, prenom")) {
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ajouterLigneEnseignant(tableau, rs, alternance);
+                alternance = !alternance;
+            }
+        }
+    }
+
+    private static void ajouterLigneEnseignant(Table tableau, ResultSet rs, boolean alternance) throws SQLException {
+        String nom = getStringSafe(rs, "nom");
+        String prenom = getStringSafe(rs, "prenom");
+        String login = getStringSafe(rs, "login");
+
+        ajouterCelluleContenu(tableau, nom, alternance);
+        ajouterCelluleContenu(tableau, prenom, alternance);
+        ajouterCelluleContenu(tableau, login, alternance);
+    }
+
     private static int compterEnseignants() throws SQLException {
         try (Connection conn = DBconnect.getconnection();
              PreparedStatement ps = conn.prepareStatement(
@@ -189,54 +286,85 @@ public class GenererPDF {
         }
     }
 
-    // Affiche une boîte de dialogue pour choisir l'emplacement de sauvegarde du fichier
+
+    private static void ajouterCelluleEnTete(Table table, String texte) {
+        table.addHeaderCell(new Cell()
+                .add(new Paragraph(texte)
+                        .setBold()
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setFontColor(ColorConstants.BLACK))
+                .setBackgroundColor(COULEUR_ENTETE)
+                .setPadding(5)
+                .setBorder(new com.itextpdf.layout.borders.SolidBorder(ColorConstants.GRAY, 1f)));
+    }
+
+
+
+    private static void ajouterCelluleContenu(Table table, String texte, boolean alternance) {
+        table.addCell(new Cell()
+                .add(new Paragraph(texte)
+                        .setTextAlignment(TextAlignment.LEFT))
+                .setBackgroundColor(alternance ? COULEUR_ALTERNANCE : ColorConstants.WHITE)
+                .setPadding(5)
+                .setBorder(new com.itextpdf.layout.borders.SolidBorder(ColorConstants.LIGHT_GRAY, 0.5f)));
+    }
+
+
+    private static String formaterDate(Date date) {
+        return date != null ? date.toLocalDate().format(DATE_FORMAT) : "N/A";
+    }
+
+    private static String formaterHeure(Time debut, Time fin) {
+        String strDebut = debut != null ? debut.toLocalTime().toString().substring(0, 5) : "";
+        String strFin = fin != null ? fin.toLocalTime().toString().substring(0, 5) : "";
+        return strDebut + " - " + strFin;
+    }
+
+    private static String getStringSafe(ResultSet rs, String colonne) throws SQLException {
+        return rs.getString(colonne) != null ? rs.getString(colonne) : "";
+    }
+
     private static File choisirFichier(Window parent, String nomBase) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Enregistrer le PDF");
         fileChooser.setSelectedFile(new File(nomBase + "_" + LocalDate.now() + ".pdf"));
 
-        int userSelection = fileChooser.showSaveDialog(parent);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            if (!selectedFile.getName().toLowerCase().endsWith(".pdf")) {
-                return new File(selectedFile.getAbsolutePath() + ".pdf");
-            }
-            return selectedFile;
+        if (fileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
+            File fichier = fileChooser.getSelectedFile();
+            return fichier.getName().toLowerCase().endsWith(".pdf")
+                    ? fichier
+                    : new File(fichier.getAbsolutePath() + ".pdf");
         }
         return null;
     }
 
-    // Ouvre le fichier PDF généré si possible
-    private static void ouvrirPDF(Window parent, File file) {
-        if (Desktop.isDesktopSupported() && file.exists()) {
-            int response = JOptionPane.showConfirmDialog(parent,
-                    "PDF généré avec succès !\nVoulez-vous ouvrir le document ?",
-                    "Succès",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
-
-            if (response == JOptionPane.YES_OPTION) {
-                try {
-                    Desktop.getDesktop().open(file);
-                } catch (IOException e) {
-                    afficherErreur(parent, "Impossible d'ouvrir le PDF", e);
-                }
+    private static void ouvrirPDF(Window parent, File fichier) {
+        try {
+            if (Desktop.isDesktopSupported() && fichier.exists() && fichier.length() > 0) {
+                Desktop.getDesktop().open(fichier);
+            } else {
+                JOptionPane.showMessageDialog(parent,
+                        "PDF généré avec succès à :\n" + fichier.getAbsolutePath(),
+                        "Succès",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(parent,
-                    "PDF généré avec succès !\nEmplacement : " + file.getAbsolutePath(),
-                    "Succès",
-                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            afficherErreur("Impossible d'ouvrir le PDF", e);
         }
     }
 
-    // Affiche un message d'erreur en cas d'exception
-    private static void afficherErreur(Window parent, String message, Exception e) {
-        JOptionPane.showMessageDialog(parent,
+    //  Gestion des erreurs
+
+    private static void gérerErreurGeneration(Window parent, Exception e) {
+        afficherErreur("Erreur lors de la génération du PDF", e);
+    }
+
+    private static void afficherErreur(String message, Exception e) {
+        JOptionPane.showMessageDialog(null,
                 message + ":\n" + e.getMessage(),
                 "Erreur",
                 JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
     }
+
 }

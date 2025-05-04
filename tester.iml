@@ -10,5 +10,7 @@
     <orderEntry type="library" name="mysql-connector-j-9.2.0" level="project" />
     <orderEntry type="library" name="miglayout" level="project" />
     <orderEntry type="library" name="iText7-Core-7.1" level="project" />
+    <orderEntry type="library" name="slf4j-api-1.7.36" level="project" />
+    <orderEntry type="library" name="slf4j-simple-1.7.36" level="project" />
   </component>
 </module>

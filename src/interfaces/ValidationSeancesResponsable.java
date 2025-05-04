@@ -62,8 +62,8 @@ public class ValidationSeancesResponsable extends JFrame {
             String sql = """
                 SELECT s.id, u.login AS enseignant, c.nom AS cours, s.date_seance, s.contenu
                 FROM seances s
-                JOIN utilisateurs u ON s.id_enseignant = u.id
-                JOIN cours c ON s.id_cours = c.id
+                JOIN utilisateurs u ON s.Enseignant_id = u.id
+                JOIN cours c ON s.cours_id = c.id
                 WHERE s.statut = 'en attente'
                 ORDER BY s.date_seance DESC
             """;
@@ -173,7 +173,7 @@ public class ValidationSeancesResponsable extends JFrame {
     private void chargerSeancesNonValidees() {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/teste", "root", "");
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT s.id, c.nom_cours, s.date, s.contenu FROM seance s JOIN cours c ON s.id_cours = c.id WHERE s.statut = 'non validée'")) {
+             ResultSet rs = stmt.executeQuery("SELECT s.id, c.nom_cours, s.date, s.contenu FROM seance s JOIN cours c ON s.cours_id = c.id WHERE s.statut = 'non validée'")) {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -248,7 +248,7 @@ public class ValidationSeancesResponsable extends JFrame {
     private void chargerSeancesNonValidees() {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/teste", "root", "");
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT s.id, c.nom_cours, s.date, s.contenu FROM seance s JOIN cours c ON s.id_cours = c.id WHERE s.statut = 'non validée'")) {
+             ResultSet rs = stmt.executeQuery("SELECT s.id, c.nom_cours, s.date, s.contenu FROM seance s JOIN cours c ON s.cours_id = c.id WHERE s.statut = 'non validée'")) {
 
             while (rs.next()) {
                 int id = rs.getInt("id");

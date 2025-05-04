@@ -38,8 +38,8 @@ public class SeancesValidees extends JFrame {
         String query = """
             SELECT s.id, c.nom_cours, u.prenom AS enseignant, s.date, s.contenu
             FROM seance s
-            JOIN cours c ON s.id_cours = c.id
-            JOIN utilisateur u ON c.id_enseignant = u.id
+            JOIN cours c ON s.cours_id = c.id
+            JOIN utilisateur u ON c.Enseignant_id = u.id
             WHERE s.statut = 'validée'
         """;
 
@@ -235,7 +235,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 public class SeancesValidees extends JPanel {
     private JTable table;
