@@ -1,6 +1,9 @@
+
 package interfaces;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.*;
@@ -24,50 +27,42 @@ public class InterfaceEnseignant extends JFrame {
 
     private void initializeUI() {
         setTitle("Espace Enseignant");
-        setSize(700, 600);
-        setSize(new Dimension(900, 700));
+        setSize(900, 700);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         getContentPane().setBackground(Color.WHITE);
     }
 
     private void initComponents() {
-        // Panel principal
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
 
-        // Header avec bande grise
+        // Header
         mainPanel.add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // Sidebar bleue
+        // Navigation
         mainPanel.add(createNavigationPanel(), BorderLayout.WEST);
 
+        // Content
         cardLayout = new CardLayout();
         JPanel contentPanel = new JPanel(cardLayout);
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Création des panels
-        JPanel welcomePanel = createWelcomePanel();
-        JPanel addPanel = createAddPanel();
-        JPanel viewPanel = createViewPanel();
-
-        contentPanel.add(welcomePanel, "welcome");
-        contentPanel.add(addPanel, "add");
-        contentPanel.add(viewPanel, "view");
+        contentPanel.add(createWelcomePanel(), "welcome");
+        contentPanel.add(createAddPanel(), "add");
+        contentPanel.add(createViewPanel(), "view");
 
         mainPanel.add(contentPanel, BorderLayout.CENTER);
         setContentPane(mainPanel);
     }
 
     private JPanel createHeaderPanel() {
-        // Panel principal pour la bande grise
         JPanel greyBandPanel = new JPanel(new BorderLayout());
         greyBandPanel.setBackground(new Color(240, 240, 240));
         greyBandPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         greyBandPanel.setPreferredSize(new Dimension(getWidth(), 60));
 
-        // Titre centré
         JLabel titre = new JLabel("Espace Enseignant", SwingConstants.CENTER);
         titre.setFont(new Font("Arial", Font.BOLD, 24));
         titre.setForeground(Color.BLACK);
@@ -83,7 +78,7 @@ public class InterfaceEnseignant extends JFrame {
         navPanel.setPreferredSize(new Dimension(250, Integer.MAX_VALUE));
         navPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
-        // Logo Panel
+        // Logo
         JPanel logoPanel = new JPanel();
         logoPanel.setBackground(new Color(70, 130, 180));
         logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -103,7 +98,7 @@ public class InterfaceEnseignant extends JFrame {
         navPanel.add(logoPanel);
         navPanel.add(Box.createVerticalStrut(20));
 
-        // Boutons de navigation
+        // Boutons
         JButton btnAjouter = createNavButton("Ajouter une séance", "add");
         JButton btnVoir = createNavButton("Voir séances", "view");
         JButton btnDeconnexion = createNavButton("Déconnexion", "logout", new Color(220, 80, 60));
@@ -148,7 +143,6 @@ public class InterfaceEnseignant extends JFrame {
             }
         });
 
-        // Effet de survol
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(bgColor.brighter());
@@ -206,19 +200,19 @@ public class InterfaceEnseignant extends JFrame {
         gbc.gridx = 1;
         panel.add(dateField, gbc);
 
-        heureDebutField = new JTextField("08:00", 18);
+        heureDebutField = new JTextField("08h:00", 18);
         heureDebutField.setPreferredSize(new Dimension(200, 40));
         gbc.gridy++;
         gbc.gridx = 0;
-        panel.add(new JLabel("Heure début (HH:MM) :"), gbc);
+        panel.add(new JLabel("Heure début (HH:mm) :"), gbc);
         gbc.gridx = 1;
         panel.add(heureDebutField, gbc);
 
-        heureFinField = new JTextField("10:00", 18);
+        heureFinField = new JTextField("10h:00", 18);
         heureFinField.setPreferredSize(new Dimension(200, 40));
         gbc.gridy++;
         gbc.gridx = 0;
-        panel.add(new JLabel("Heure fin (HH:MM) :"), gbc);
+        panel.add(new JLabel("Heure fin (HH:00) :"), gbc);
         gbc.gridx = 1;
         panel.add(heureFinField, gbc);
 
@@ -303,7 +297,11 @@ public class InterfaceEnseignant extends JFrame {
     private void chargerCours() {
         coursCombo.removeAllItems();
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/teste", "root", "");
-             PreparedStatement stmt = conn.prepareStatement("SELECT nom FROM cours WHERE Enseignant_id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT c.nom FROM cours c " +
+                             "JOIN enseignants_cours ec ON c.id = ec.cours_id " +
+                             "WHERE ec.Enseignant_id = ?")) {
+
             stmt.setInt(1, enseignantId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -327,7 +325,11 @@ public class InterfaceEnseignant extends JFrame {
         }
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/teste", "root", "")) {
-            PreparedStatement coursStmt = conn.prepareStatement("SELECT id FROM cours WHERE nom = ? AND Enseignant_id = ?");
+            PreparedStatement coursStmt = conn.prepareStatement(
+                    "SELECT c.id FROM cours c " +
+                            "JOIN enseignants_cours ec ON c.id = ec.cours_id " +
+                            "WHERE c.nom = ? AND ec.Enseignant_id = ?");
+
             coursStmt.setString(1, coursNom);
             coursStmt.setInt(2, enseignantId);
             ResultSet rs = coursStmt.executeQuery();
@@ -351,7 +353,7 @@ public class InterfaceEnseignant extends JFrame {
                 contenuArea.setText("");
                 chargerSeancesEnseignant();
             } else {
-                JOptionPane.showMessageDialog(this, "Cours non trouvé.");
+                JOptionPane.showMessageDialog(this, "Cours non trouvé ou non assigné à cet enseignant.");
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Erreur ajout séance : " + ex.getMessage());
@@ -359,58 +361,93 @@ public class InterfaceEnseignant extends JFrame {
     }
 
     private void chargerSeancesEnseignant() throws SQLException {
-        listeSeancesPanel.removeAll();
+        // Modèle de données pour le tableau
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Rendre toutes les cellules non éditables
+            }
+        };
+
+        // Définir les colonnes
+        model.setColumnIdentifiers(new String[]{"Cours", "Date", "Heure début", "Heure fin", "Statut", "Motif"});
+
+        // Créer le tableau avec le modèle
+        JTable table = new JTable(model);
+
+        // Personnaliser l'apparence du tableau
+        table.setRowHeight(30);
+        table.setFont(new Font("Arial", Font.PLAIN, 14));
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setAutoCreateRowSorter(true);
+
+        // Centrer le texte dans les cellules
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Couleur des lignes selon le statut
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value,
+                        isSelected, hasFocus, row, column);
+
+                String statut = (String) table.getModel().getValueAt(row, 4);
+                if ("validée".equalsIgnoreCase(statut)) {
+                    c.setBackground(new Color(220, 255, 220)); // Vert clair
+                } else if ("refusée".equalsIgnoreCase(statut)) {
+                    c.setBackground(new Color(255, 220, 220)); // Rouge clair
+                } else {
+                    c.setBackground(Color.WHITE);
+                }
+
+                if (isSelected) {
+                    c.setBackground(new Color(200, 200, 255)); // Bleu clair pour sélection
+                }
+
+                return c;
+            }
+        });
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/teste", "root", "");
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT s.id, c.nom AS cours, s.dateseance, s.heure_debut, s.heure_fin, s.statut, s.commentaire_refus " +
-                             "FROM seance s JOIN cours c ON s.cours_id = c.id " +
-                             "WHERE s.Enseignant_id = ? ORDER BY s.dateseance DESC"
-             )) {
+                     "SELECT c.nom AS cours, s.dateseance, s.heure_debut, s.heure_fin, s.statut, s.commentaire_refus " +
+                             "FROM seance s " +
+                             "JOIN cours c ON s.cours_id = c.id " +
+                             "JOIN enseignants_cours ec ON c.id = ec.cours_id " +
+                             "WHERE s.Enseignant_id = ? AND ec.Enseignant_id = ? " +
+                             "ORDER BY s.dateseance DESC")) {
+
             stmt.setInt(1, enseignantId);
+            stmt.setInt(2, enseignantId);
             ResultSet result = stmt.executeQuery();
 
+            // Remplir le modèle avec les données
             while (result.next()) {
-                String cours = result.getString("cours");
-                String date = result.getString("dateseance");
-                String debut = result.getString("heure_debut");
-                String fin = result.getString("heure_fin");
-                String statut = result.getString("statut");
-                String refus = result.getString("commentaire_refus");
-
-                JPanel card = new JPanel();
-                card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-                card.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(new Color(220, 220, 220)),
-                        BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-                card.setBackground(Color.WHITE);
-
-                JLabel coursLabel = new JLabel("Cours: " + cours);
-                JLabel dateLabel = new JLabel("Date: " + date + " (" + debut + " - " + fin + ")");
-                JLabel statutLabel = new JLabel("Statut: " + statut);
-
-                statutLabel.setForeground(
-                        "validée".equalsIgnoreCase(statut) ? new Color(50, 150, 50) :
-                                "refusée".equalsIgnoreCase(statut) ? new Color(200, 50, 50) : Color.BLACK);
-
-                card.add(coursLabel);
-                card.add(dateLabel);
-                card.add(statutLabel);
-
-                if ("refusée".equalsIgnoreCase(statut) && refus != null) {
-                    JLabel refusLabel = new JLabel("Motif: " + refus);
-                    refusLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-                    refusLabel.setForeground(new Color(150, 50, 50));
-                    card.add(refusLabel);
-                }
-
-                listeSeancesPanel.add(card);
-                listeSeancesPanel.add(Box.createVerticalStrut(10));
+                model.addRow(new Object[]{
+                        result.getString("cours"),
+                        result.getString("dateseance"),
+                        result.getString("heure_debut"),
+                        result.getString("heure_fin"),
+                        result.getString("statut"),
+                        result.getString("commentaire_refus") != null ?
+                                result.getString("commentaire_refus") : "N/A"
+                });
             }
-
-            listeSeancesPanel.revalidate();
-            listeSeancesPanel.repaint();
         }
+
+        // Nettoyer le panel et ajouter le tableau avec scroll
+        listeSeancesPanel.removeAll();
+        listeSeancesPanel.setLayout(new BorderLayout());
+        listeSeancesPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        listeSeancesPanel.revalidate();
+        listeSeancesPanel.repaint();
     }
 
     public static void main(String[] args) {

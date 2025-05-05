@@ -1,139 +1,3 @@
-/*package models ;
-import java.time.LocalDate ;
-import java.time.LocalTime;
-
-public class Seance {
-    private String nomCours ;
-    private LocalDate date ;
-    private LocalTime heureDebut ;
-    private String contenu ;
-    private String statut ;
-    private  String commentaire ;
-
-    public Seance(String nomCours,LocalDate date,LocalTime heureDebut ,String contenu,String statut,String commentaire) {
-
-        this.nomCours = nomCours;
-        this.date = date ;
-        this.heureDebut = heureDebut ;
-        this.contenu = contenu ;
-        this.statut = statut ;
-        this.commentaire = commentaire;
-    }
-
-    public Seance(int id, String nomCours, LocalDate date, String contenu) {
-
-    }
-
-    public String getnomCours() {
-        return nomCours;
-    }
-
-    public LocalDate getdate() {
-        return date;
-    }
-
-    public LocalTime getheureDebut() {
-        return heureDebut;
-    }
-
-    public String getcontenu() {
-        return contenu;
-    }
-
-    public String getstatut() {
-        return statut;
-    }
-
-    public String getcommentaire() {
-        return commentaire;
-    }
-
-    public void setnomCours(String nomCours) {
-        this.nomCours = nomCours;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public void setheureDebut(LocalTime heureDebut) {
-        this.heureDebut = heureDebut;
-    }
-
-    public void setcontenu(String contenu) {
-        this.contenu = contenu;
-    }
-
-    public void setstatut(String statut) {
-        this.statut = statut;
-    }
-
-    public void setcommentaire(String commentaire) {
-        this.commentaire = commentaire;
-    }
-}
-
-
- */
-//package models;
-//
-//import java.time.LocalDate;
-//
-//public class Seance {
-//    private int id;
-//    private String nomCours;
-//    private LocalDate date;
-//    private String contenu;
-//    private String statut;
-//    private String commentaire;
-//    private String heureDebut;
-//
-//    // Constructeur pour affichage dans validation
-//    public Seance(int id, String nomCours, LocalDate date, String contenu) {
-//        this.id = id;
-//        this.nomCours = nomCours;
-//        this.date = date;
-//        this.contenu = contenu;
-//    }
-//
-//    // Constructeur complet pour affichage général
-//    public Seance(String nomCours, LocalDate date, java.time.LocalTime heureDebut, String contenu, String statut, String commentaire) {
-//        this.nomCours = nomCours;
-//        this.date = date;
-//        this.contenu = contenu;
-//        this.statut = statut;
-//        this.commentaire = commentaire;
-//    }
-//
-//    public int getId() {
-//        return id;
-//    }
-//
-//    public String getNomCours() {
-//        return nomCours;
-//    }
-//
-//    public LocalDate getDate() {
-//        return date;
-//    }
-//
-//    public String getContenu() {
-//        return contenu;
-//    }
-//
-//    public String getStatut() {
-//        return statut;
-//    }
-//
-//    public String getCommentaire() {
-//        return commentaire;
-//    }
-//
-//    public String getHeureDebut() {
-//
-//        return heureDebut;
-//    }
-//}
 
 package models;
 
@@ -149,6 +13,7 @@ public class Seance {
     private String contenu;
     private String statut;
     private String commentaire;
+    private Object commentaireRefus;
 
     //  Constructeur complet avec ID (pour validation/responsable)
     public Seance(int id, String nomCours, LocalDate date, LocalTime heureDebut, String contenu, String statut, String commentaire) {
@@ -241,5 +106,14 @@ public class Seance {
                 ", statut='" + statut + '\'' +
                 ", commentaire='" + commentaire + '\'' +
                 '}';
+    }
+
+
+    public Object getCommentaireRefus() {
+        return commentaireRefus;
+    }
+
+    public void setCommentaireRefus(Object commentaireRefus) {
+        this.commentaireRefus = commentaireRefus;
     }
 }

@@ -1,4 +1,3 @@
-
 package interfaces;
 
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -21,7 +20,6 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
 public class GenererPDF {
 
     // Formats et configurations constants
@@ -30,8 +28,6 @@ public class GenererPDF {
     private static final float[] COLUMN_WIDTHS_ENS = {3, 3, 4};
     private static final DeviceRgb COULEUR_ENTETE = new DeviceRgb(220, 220, 220);
     private static final DeviceRgb COULEUR_ALTERNANCE = new DeviceRgb(240, 240, 240);
-
-    // Point d'entrée principal du programme
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -45,9 +41,6 @@ public class GenererPDF {
         });
     }
 
-
-    // methode pour le PDF d'emploi du temps
-
     public static void genererEmploiDuTempsPDF(Window parent) {
         File fichier = choisirFichier(parent, "EmploiDuTemps");
         if (fichier == null) return;
@@ -56,11 +49,9 @@ public class GenererPDF {
              PdfDocument pdf = new PdfDocument(writer);
              Document document = new Document(pdf)) {
 
-            // Configuration du document
             ajouterEnTeteDocument(document, "EMPLOI DU TEMPS");
             ajouterPeriode(document);
 
-            // Création du tableau
             Table tableau = creerTableauEDT();
             int nbSeances = remplirTableauEDT(tableau);
             document.add(tableau);
@@ -76,8 +67,6 @@ public class GenererPDF {
             gérerErreurGeneration(parent, e);
         }
     }
-
-    // methode pour le PDF de la liste des Enseignants
 
     public static void genererListeEnseignantsPDF(Window parent) {
         File fichier = choisirFichier(parent, "ListeEnseignants");
@@ -110,8 +99,6 @@ public class GenererPDF {
         }
     }
 
-    // les Méthodes d'initialisation
-
     private static void configurerApparence() throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
@@ -123,8 +110,6 @@ public class GenererPDF {
         frame.setLocationRelativeTo(null);
         return frame;
     }
-
-    // les Méthodes de menu
 
     private static void afficherMenuPrincipal(Window parent) {
         String[] options = {
@@ -154,10 +139,8 @@ public class GenererPDF {
         }
     }
 
-    // Méthodes pour la generation PDF
-
     private static Table creerTableauEDT() {
-        Table tableau = new Table(UnitValue.createPercentArray(new float[]{20f, 20f, 30f, 30f}));
+        Table tableau = new Table(UnitValue.createPercentArray(COLUMN_WIDTHS_EDT));
         tableau.setWidth(UnitValue.createPercentValue(100));
         ajouterCelluleEnTete(tableau, "Date");
         ajouterCelluleEnTete(tableau, "Heure");
@@ -166,52 +149,14 @@ public class GenererPDF {
         return tableau;
     }
 
-
     private static Table creerTableauEnseignants() {
-        Table tableau = new Table(UnitValue.createPercentArray(new float[]{20f, 30f, 50f}));
-
+        Table tableau = new Table(UnitValue.createPercentArray(COLUMN_WIDTHS_ENS));
         tableau.setWidth(UnitValue.createPercentValue(100));
         ajouterCelluleEnTete(tableau, "Nom");
         ajouterCelluleEnTete(tableau, "Prénom");
         ajouterCelluleEnTete(tableau, "Login");
         return tableau;
     }
-
-    private static void ajouterEnTeteDocument(Document doc, String titre) {
-        doc.add(new Paragraph(titre)
-                .setTextAlignment(TextAlignment.CENTER)
-                .setFontSize(18)
-                .setBold());
-    }
-
-    private static void ajouterPeriode(Document doc) {
-        LocalDate aujourdhui = LocalDate.now();
-        doc.add(new Paragraph("Période du " + aujourdhui.format(DATE_FORMAT) + " au "
-                + aujourdhui.plusDays(7).format(DATE_FORMAT))
-                .setTextAlignment(TextAlignment.CENTER));
-    }
-
-    private static void ajouterDateGeneration(Document doc) {
-        doc.add(new Paragraph("Généré le " + LocalDate.now().format(DATE_FORMAT))
-                .setTextAlignment(TextAlignment.CENTER)
-                .setItalic());
-    }
-
-    private static void ajouterMessageAucuneDonnee(Document doc, String message) {
-        doc.add(new Paragraph(message)
-                .setFontColor(ColorConstants.RED)
-                .setTextAlignment(TextAlignment.CENTER));
-    }
-
-    private static void ajouterPiedDePage(Document doc) {
-        doc.add(new Paragraph("\n"));
-        doc.add(new Paragraph("Document généré par l'application cahier de texte")
-                .setTextAlignment(TextAlignment.CENTER)
-                .setFontSize(11)
-                .setItalic());
-    }
-
-    // Méthodes de données
 
     private static int remplirTableauEDT(Table tableau) throws SQLException {
         int nbLignes = 0;
@@ -220,11 +165,12 @@ public class GenererPDF {
         try (Connection conn = DBconnect.getconnection();
              PreparedStatement ps = conn.prepareStatement(
                      "SELECT s.dateseance, s.heure_debut, s.heure_fin, c.nom AS cours, " +
-                             "CONCAT(u.prenom, ' ', u.nom) AS Enseignant " +
+                             "CONCAT(u.prenom, ' ', u.nom) AS enseignant " +
                              "FROM seance s " +
                              "JOIN cours c ON s.cours_id = c.id " +
                              "JOIN utilisateur u ON s.Enseignant_id = u.id " +
                              "WHERE s.dateseance BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY) " +
+                             "AND s.statut = 'validé' " +  // Filtre sur le statut
                              "ORDER BY s.dateseance, s.heure_debut")) {
 
             ResultSet rs = ps.executeQuery();
@@ -242,12 +188,12 @@ public class GenererPDF {
         String date = formaterDate(rs.getDate("dateseance"));
         String heure = formaterHeure(rs.getTime("heure_debut"), rs.getTime("heure_fin"));
         String cours = getStringSafe(rs, "cours");
-        String Enseignant = getStringSafe(rs, "Enseignant");
+        String enseignant = getStringSafe(rs, "enseignant");
 
         ajouterCelluleContenu(tableau, date, alternance);
         ajouterCelluleContenu(tableau, heure, alternance);
         ajouterCelluleContenu(tableau, cours, alternance);
-        ajouterCelluleContenu(tableau, Enseignant, alternance);
+        ajouterCelluleContenu(tableau, enseignant, alternance);
     }
 
     private static void remplirTableauEnseignants(Table tableau) throws SQLException {
@@ -286,6 +232,39 @@ public class GenererPDF {
         }
     }
 
+    private static void ajouterEnTeteDocument(Document doc, String titre) {
+        doc.add(new Paragraph(titre)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFontSize(18)
+                .setBold());
+    }
+
+    private static void ajouterPeriode(Document doc) {
+        LocalDate aujourdhui = LocalDate.now();
+        doc.add(new Paragraph("Période du " + aujourdhui.format(DATE_FORMAT) + " au "
+                + aujourdhui.plusDays(7).format(DATE_FORMAT))
+                .setTextAlignment(TextAlignment.CENTER));
+    }
+
+    private static void ajouterDateGeneration(Document doc) {
+        doc.add(new Paragraph("Généré le " + LocalDate.now().format(DATE_FORMAT))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setItalic());
+    }
+
+    private static void ajouterMessageAucuneDonnee(Document doc, String message) {
+        doc.add(new Paragraph(message)
+                .setFontColor(ColorConstants.RED)
+                .setTextAlignment(TextAlignment.CENTER));
+    }
+
+    private static void ajouterPiedDePage(Document doc) {
+        doc.add(new Paragraph("\n"));
+        doc.add(new Paragraph("Document généré par l'application cahier de texte")
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFontSize(11)
+                .setItalic());
+    }
 
     private static void ajouterCelluleEnTete(Table table, String texte) {
         table.addHeaderCell(new Cell()
@@ -298,8 +277,6 @@ public class GenererPDF {
                 .setBorder(new com.itextpdf.layout.borders.SolidBorder(ColorConstants.GRAY, 1f)));
     }
 
-
-
     private static void ajouterCelluleContenu(Table table, String texte, boolean alternance) {
         table.addCell(new Cell()
                 .add(new Paragraph(texte)
@@ -308,7 +285,6 @@ public class GenererPDF {
                 .setPadding(5)
                 .setBorder(new com.itextpdf.layout.borders.SolidBorder(ColorConstants.LIGHT_GRAY, 0.5f)));
     }
-
 
     private static String formaterDate(Date date) {
         return date != null ? date.toLocalDate().format(DATE_FORMAT) : "N/A";
@@ -353,8 +329,6 @@ public class GenererPDF {
         }
     }
 
-    //  Gestion des erreurs
-
     private static void gérerErreurGeneration(Window parent, Exception e) {
         afficherErreur("Erreur lors de la génération du PDF", e);
     }
@@ -366,5 +340,4 @@ public class GenererPDF {
                 JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
     }
-
 }

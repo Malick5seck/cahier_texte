@@ -8,9 +8,8 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
 
 public class InterfaceChefDepartement extends JFrame {
     private JPanel contentPanel;
@@ -22,47 +21,35 @@ public class InterfaceChefDepartement extends JFrame {
     private VoirSeancesTousEnseignants seancesPanel;
     private AjoutUtilisateur ajoutUtilisateurPanel;
     private AssignerCours assignerCoursPanel;
+    private AjoutCoursPanel ajoutCoursPanel;
     private JPanel gestionUtilisateursPanel;
     private DefaultTableModel usersTableModel;
-
-    // Panel des statistiques (nouvelle variable de classe)
     private JPanel statsPanel;
 
-    public InterfaceChefDepartement(Utilisateur user) {
-        this.currentUser = user;
+    public InterfaceChefDepartement() {
+//        this.currentUser = user;
         this.appState = new HashMap<>();
         appState.put("currentUser", currentUser);
         initializeUI();
         initComponents();
     }
 
-    public InterfaceChefDepartement() {
-        this(new Utilisateur());
-    }
-
-    /**
-     * Initialise l'interface utilisateur de base
-     */
     private void initializeUI() {
         setTitle("Tableau de bord - Chef de Département");
-        setSize(700, 600);
-        setSize(new Dimension(900, 700));
+        setSize(900, 700);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         getContentPane().setBackground(Color.WHITE);
     }
 
-    /**
-     * Initialise les composants principaux de l'interface
-     */
     private void initComponents() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
 
-        // Header avec bande grise
+        // Header
         mainPanel.add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // Sidebar bleue
+        // Navigation
         mainPanel.add(createNavigationPanel(), BorderLayout.WEST);
 
         // Content area
@@ -76,26 +63,20 @@ public class InterfaceChefDepartement extends JFrame {
         setContentPane(mainPanel);
     }
 
-    /**
-     * Crée le header de l'application
-     */
     private JPanel createHeaderPanel() {
-        JPanel greyBandPanel = new JPanel(new BorderLayout());
-        greyBandPanel.setBackground(new Color(240, 240, 240));
-        greyBandPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
-        greyBandPanel.setPreferredSize(new Dimension(getWidth(), 60));
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(new Color(240, 240, 240));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
+        headerPanel.setPreferredSize(new Dimension(getWidth(), 60));
 
-        JLabel titre = new JLabel("Espace Chef de Département", SwingConstants.CENTER);
-        titre.setFont(new Font("Arial", Font.BOLD, 24));
-        titre.setForeground(Color.BLACK);
+        JLabel title = new JLabel("Espace Chef de Département", SwingConstants.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 24));
+        title.setForeground(Color.BLACK);
+        headerPanel.add(title, BorderLayout.CENTER);
 
-        greyBandPanel.add(titre, BorderLayout.CENTER);
-        return greyBandPanel;
+        return headerPanel;
     }
 
-    /**
-     * Crée la barre de navigation latérale
-     */
     private JPanel createNavigationPanel() {
         JPanel navPanel = new JPanel();
         navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
@@ -103,7 +84,7 @@ public class InterfaceChefDepartement extends JFrame {
         navPanel.setPreferredSize(new Dimension(250, Integer.MAX_VALUE));
         navPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
-        // Logo Panel
+        // Logo
         JPanel logoPanel = new JPanel();
         logoPanel.setBackground(new Color(70, 130, 180));
         logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -116,7 +97,7 @@ public class InterfaceChefDepartement extends JFrame {
             JLabel logoLabel = new JLabel(new ImageIcon(scaledImage));
             logoPanel.add(logoLabel);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Image non trouvée ", "Erreur", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Image non trouvée", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
 
         navPanel.add(Box.createVerticalStrut(20));
@@ -128,6 +109,7 @@ public class InterfaceChefDepartement extends JFrame {
         JButton btnSeances = createNavButton("Gestion des séances", "seances");
         JButton btnUtilisateurs = createNavButton("Gestion des utilisateurs", "utilisateurs");
         JButton btnCours = createNavButton("Assignation des cours", "assignation");
+        JButton btnAjouterCours = createNavButton("Ajouter des Cours", "ajoutcours", new Color(50, 100, 150));
         JButton btnGenererPDF = createNavButton("Générer PDF", "genererpdf", new Color(50, 100, 150));
         JButton btnDeconnexion = createNavButton("Déconnexion", "logout", new Color(220, 80, 60));
 
@@ -139,6 +121,8 @@ public class InterfaceChefDepartement extends JFrame {
         navPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         navPanel.add(btnCours);
         navPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        navPanel.add(btnAjouterCours);
+        navPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         navPanel.add(btnGenererPDF);
         navPanel.add(Box.createVerticalGlue());
         navPanel.add(btnDeconnexion);
@@ -146,16 +130,10 @@ public class InterfaceChefDepartement extends JFrame {
         return navPanel;
     }
 
-    /**
-     * Crée un bouton de navigation avec style par défaut
-     */
     private JButton createNavButton(String text, String panelName) {
         return createNavButton(text, panelName, new Color(50, 100, 150));
     }
 
-    /**
-     * Crée un bouton de navigation avec style personnalisé
-     */
     private JButton createNavButton(String text, String panelName, Color bgColor) {
         JButton button = new JButton(text);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -174,7 +152,6 @@ public class InterfaceChefDepartement extends JFrame {
             }
         });
 
-        // Effet de survol
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -192,107 +169,33 @@ public class InterfaceChefDepartement extends JFrame {
         return button;
     }
 
-    /**
-     * Initialise tous les panels de contenu
-     */
     private void initContentPanels() {
-        // Panel Dashboard
+        // Dashboard
         contentPanel.add(createDashboardPanel(), "dashboard");
 
-        // Panel Séances
+        // Séances
         seancesPanel = new VoirSeancesTousEnseignants(appState, true);
         contentPanel.add(seancesPanel, "seances");
 
-        // Panel Ajout Utilisateur
-        ajoutUtilisateurPanel = new AjoutUtilisateur();
-        contentPanel.add(ajoutUtilisateurPanel, "ajout");
+        // Utilisateurs
 
-        // Panel Assignation Cours
-        assignerCoursPanel = new AssignerCours(appState);
-        contentPanel.add(assignerCoursPanel, "assignation");
-
-        // Panel Gestion Utilisateurs
         gestionUtilisateursPanel = createGestionUtilisateursPanel();
         contentPanel.add(gestionUtilisateursPanel, "utilisateurs");
 
-        // Panel Génération PDF
+        // Assignation cours
+        assignerCoursPanel = new AssignerCours(appState);
+        contentPanel.add(assignerCoursPanel, "assignation");
+
+        // Ajout cours
+        ajoutCoursPanel = new AjoutCoursPanel(assignerCoursPanel);
+        contentPanel.add(ajoutCoursPanel, "ajoutcours");
+
+        ajoutUtilisateurPanel = new AjoutUtilisateur();
+        contentPanel.add(ajoutUtilisateurPanel,"ajout");
+
+        // Génération PDF
         contentPanel.add(createGenererPDFPanel(), "genererpdf");
     }
-
-    /**
-     * Crée le panel de génération de PDF
-     */
-    private JPanel createGenererPDFPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel title = new JLabel("Génération de PDF", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 18));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton btnGenererEmploi = new JButton("Générer Emploi du Temps");
-        styleHoverButton(btnGenererEmploi, new Color(70, 130, 180));
-        btnGenererEmploi.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnGenererEmploi.addActionListener(e -> genererEmploiDuTempsPDF());
-
-        JButton btnGenererListe = new JButton("Générer Liste Enseignants");
-        styleHoverButton(btnGenererListe, new Color(70, 130, 180));
-        btnGenererListe.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnGenererListe.addActionListener(e -> genererListeEnseignantsPDF());
-
-        content.add(Box.createVerticalStrut(50));
-        content.add(title);
-        content.add(Box.createVerticalStrut(30));
-        content.add(btnGenererEmploi);
-        content.add(Box.createVerticalStrut(15));
-        content.add(btnGenererListe);
-
-        panel.add(content, BorderLayout.CENTER);
-        return panel;
-    }
-
-    //  effet de survol
-
-    private void styleHoverButton(JButton button, Color bgColor) {
-        button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-
-        button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(bgColor.brighter());
-                button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(bgColor);
-                button.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            }
-        });
-    }
-
-    //  Génère un PDF d'emploi du temps
-
-    private void genererEmploiDuTempsPDF() {
-        GenererPDF.genererEmploiDuTempsPDF(this);
-    }
-
-    //Génère un PDF de liste d'enseignants
-
-    private void genererListeEnseignantsPDF() {
-        GenererPDF.genererListeEnseignantsPDF(this);
-    }
-
-    //Crée le panel du tableau de bord avec les statistiques
 
     private JPanel createDashboardPanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -302,48 +205,37 @@ public class InterfaceChefDepartement extends JFrame {
         welcomeLabel.setFont(new Font("Arial", Font.PLAIN, 24));
         panel.add(welcomeLabel, BorderLayout.CENTER);
 
-        // Panel des statistiques (initialisé comme variable de classe)
         statsPanel = new JPanel(new GridLayout(1, 3, 10, 10));
         statsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        // Chargement initial des statistiques
         refreshDashboardStats();
-
         panel.add(statsPanel, BorderLayout.SOUTH);
 
         return panel;
     }
 
-    // Rafraîchit les statistiques affichées dans le tableau de bord
-
     private void refreshDashboardStats() {
         SwingUtilities.invokeLater(() -> {
-            if (statsPanel != null) {
-                statsPanel.removeAll();
-                statsPanel.add(createStatCard("Séances cette semaine", getSeancesCount()));
-                statsPanel.add(createStatCard("Enseignants", getEnseignantsCount()));
-                statsPanel.add(createStatCard("Cours assignés", getCoursAssignesCount()));
-                statsPanel.revalidate();
-                statsPanel.repaint();
-            }
+            statsPanel.removeAll();
+            statsPanel.add(createStatCard("Séances cette semaine", getSeancesCount()));
+            statsPanel.add(createStatCard("Enseignants", getEnseignantsCount()));
+            statsPanel.add(createStatCard("Cours non assignés", getCoursNonAssignesCount()));
+            statsPanel.revalidate();
+            statsPanel.repaint();
         });
     }
-
-    // Compte le nombre de séances de la semaine
 
     private String getSeancesCount() {
         try (Connection conn = DBconnect.getconnection();
              PreparedStatement ps = conn.prepareStatement(
                      "SELECT COUNT(*) FROM seance " +
-                             "WHERE dateseance BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY)")) {
+                             "WHERE dateseance BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY) " +
+                             "AND statut = 'validee'")) {
             ResultSet rs = ps.executeQuery();
             return rs.next() ? rs.getString(1) : "0";
         } catch (SQLException e) {
             return "NULL";
         }
     }
-
-    // Compte le nombre d'enseignants
 
     private String getEnseignantsCount() {
         try (Connection conn = DBconnect.getconnection();
@@ -356,20 +248,17 @@ public class InterfaceChefDepartement extends JFrame {
         }
     }
 
-    // Compte le nombre de cours assignés
-
-    private String getCoursAssignesCount() {
+    private String getCoursNonAssignesCount() {
         try (Connection conn = DBconnect.getconnection();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT COUNT(*) FROM enseignants_cours")) {
+                     "SELECT COUNT(*) FROM cours " +
+                             "WHERE id NOT IN (SELECT cours_id FROM enseignants_cours)")) {
             ResultSet rs = ps.executeQuery();
             return rs.next() ? rs.getString(1) : "0";
         } catch (SQLException e) {
             return "NULL";
         }
     }
-
-    // Crée une carte de statistique
 
     private JPanel createStatCard(String title, String value) {
         JPanel card = new JPanel();
@@ -395,15 +284,13 @@ public class InterfaceChefDepartement extends JFrame {
         return card;
     }
 
-    // Crée le panel de gestion des utilisateurs
-
     private JPanel createGestionUtilisateursPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
         usersTableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 5;
+                return false;
             }
         };
         usersTableModel.setColumnIdentifiers(new String[]{"ID", "Nom", "Prénom", "Login", "Rôle"});
@@ -441,8 +328,6 @@ public class InterfaceChefDepartement extends JFrame {
         return panel;
     }
 
-    //Charge les données des utilisateurs dans la table
-
     private void loadUsersData() {
         usersTableModel.setRowCount(0);
 
@@ -467,8 +352,6 @@ public class InterfaceChefDepartement extends JFrame {
         }
     }
 
-    // Modifie un utilisateur sélectionné
-
     private void editSelectedUser(JTable table) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
@@ -489,7 +372,7 @@ public class InterfaceChefDepartement extends JFrame {
         JTextField nomField = new JTextField(nom);
         JTextField prenomField = new JTextField(prenom);
         JTextField loginField = new JTextField(login);
-        JComboBox<String> roleCombo = new JComboBox<>(new String[]{"enseignant", "responsable"});
+        JComboBox<String> roleCombo = new JComboBox<>(new String[]{"Enseignant", "Responsable"});
         roleCombo.setSelectedItem(role);
         JPasswordField passwordField = new JPasswordField();
 
@@ -501,7 +384,7 @@ public class InterfaceChefDepartement extends JFrame {
         editPanel.add(loginField);
         editPanel.add(new JLabel("Rôle:"));
         editPanel.add(roleCombo);
-        editPanel.add(new JLabel("Nouveau mot de passe :"));
+        editPanel.add(new JLabel("Nouveau mot de passe:"));
         editPanel.add(passwordField);
 
         int result = JOptionPane.showConfirmDialog(
@@ -518,11 +401,9 @@ public class InterfaceChefDepartement extends JFrame {
                     passwordField.getPassword()
             );
             loadUsersData();
-            refreshDashboardStats(); // Rafraîchit les stats après modification
+            refreshDashboardStats();
         }
     }
-
-    // Met à jour un utilisateur dans la base de données
 
     private void updateUserInDatabase(int userId, String nom, String prenom, String login,
                                       String role, char[] password) {
@@ -556,19 +437,11 @@ public class InterfaceChefDepartement extends JFrame {
                         "Succès", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (SQLException e) {
-            if (e.getSQLState().equals("23000")) {
-                JOptionPane.showMessageDialog(this,
-                        "Ce login est déjà utilisé par un autre utilisateur",
-                        "Erreur", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "Erreur lors de la mise à jour: " + e.getMessage(),
-                        "Erreur", JOptionPane.ERROR_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(this,
+                    "Erreur lors de la mise à jour: " + e.getMessage(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    // Supprime un utilisateur sélectionné
 
     private void deleteSelectedUser(JTable table) {
         int selectedRow = table.getSelectedRow();
@@ -603,7 +476,7 @@ public class InterfaceChefDepartement extends JFrame {
                             "Utilisateur supprimé avec succès",
                             "Succès", JOptionPane.INFORMATION_MESSAGE);
                     loadUsersData();
-                    refreshDashboardStats(); // Rafraîchit les stats après suppression
+                    refreshDashboardStats();
                 }
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this,
@@ -613,23 +486,88 @@ public class InterfaceChefDepartement extends JFrame {
         }
     }
 
-    // Affiche le panel correspondant au nom donné
+    private JPanel createGenererPDFPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel title = new JLabel("Génération de PDF", SwingConstants.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 18));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton btnGenererEmploi = new JButton("Générer Emploi du Temps");
+        styleHoverButton(btnGenererEmploi, new Color(70, 130, 180));
+        btnGenererEmploi.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnGenererEmploi.addActionListener(e -> genererEmploiDuTempsPDF());
+
+        JButton btnGenererListe = new JButton("Générer Liste Enseignants");
+        styleHoverButton(btnGenererListe, new Color(70, 130, 180));
+        btnGenererListe.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnGenererListe.addActionListener(e -> genererListeEnseignantsPDF());
+
+        content.add(Box.createVerticalStrut(50));
+        content.add(title);
+        content.add(Box.createVerticalStrut(30));
+        content.add(btnGenererEmploi);
+        content.add(Box.createVerticalStrut(15));
+        content.add(btnGenererListe);
+
+        panel.add(content, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private void styleHoverButton(JButton button, Color bgColor) {
+        button.setBackground(bgColor);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(bgColor.brighter());
+                button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(bgColor);
+                button.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+    }
+
+    private void genererEmploiDuTempsPDF() {
+        GenererPDF.genererEmploiDuTempsPDF(this);
+    }
+
+    private void genererListeEnseignantsPDF() {
+        GenererPDF.genererListeEnseignantsPDF(this);
+    }
 
     private void showPanel(String panelName) {
         cardLayout.show(contentPanel, panelName);
 
-        if ("dashboard".equals(panelName)) {
-            refreshDashboardStats(); // Rafraîchit les stats quand on revient sur le dashboard
-        } else if ("seances".equals(panelName)) {
-            seancesPanel.chargerDonnees();
-        } else if ("utilisateurs".equals(panelName)) {
-            loadUsersData();
-        } else if ("assignation".equals(panelName)) {
-            assignerCoursPanel.rafraichirDonnees();
+        switch (panelName) {
+            case "dashboard":
+                refreshDashboardStats();
+                break;
+            case "seances":
+                seancesPanel.chargerDonnees();
+                break;
+            case "utilisateurs":
+                loadUsersData();
+                break;
+            case "assignation":
+                assignerCoursPanel.rafraichirDonnees();
+                break;
         }
     }
-
-    // Confirme et ferme la session
 
     private void confirmAndExit() {
         int response = JOptionPane.showConfirmDialog(
