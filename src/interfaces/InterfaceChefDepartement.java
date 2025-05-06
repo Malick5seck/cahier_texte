@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 import java.util.*;
-import java.util.List;
+
 
 public class InterfaceChefDepartement extends JFrame {
     private JPanel contentPanel;
@@ -18,6 +18,7 @@ public class InterfaceChefDepartement extends JFrame {
     private Utilisateur currentUser;
 
     // Références aux panels
+
     private VoirSeancesTousEnseignants seancesPanel;
     private AjoutUtilisateur ajoutUtilisateurPanel;
     private AssignerCours assignerCoursPanel;
@@ -27,7 +28,7 @@ public class InterfaceChefDepartement extends JFrame {
     private JPanel statsPanel;
 
     public InterfaceChefDepartement() {
-//        this.currentUser = user;
+
         this.appState = new HashMap<>();
         appState.put("currentUser", currentUser);
         initializeUI();
@@ -47,12 +48,15 @@ public class InterfaceChefDepartement extends JFrame {
         mainPanel.setBackground(Color.WHITE);
 
         // Header
+
         mainPanel.add(createHeaderPanel(), BorderLayout.NORTH);
 
         // Navigation
+
         mainPanel.add(createNavigationPanel(), BorderLayout.WEST);
 
         // Content area
+
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
         contentPanel.setBackground(Color.WHITE);
@@ -85,6 +89,7 @@ public class InterfaceChefDepartement extends JFrame {
         navPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
         // Logo
+
         JPanel logoPanel = new JPanel();
         logoPanel.setBackground(new Color(70, 130, 180));
         logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -105,6 +110,7 @@ public class InterfaceChefDepartement extends JFrame {
         navPanel.add(Box.createVerticalStrut(20));
 
         // Boutons de navigation
+
         JButton btnDashboard = createNavButton("Tableau de bord", "dashboard");
         JButton btnSeances = createNavButton("Gestion des séances", "seances");
         JButton btnUtilisateurs = createNavButton("Gestion des utilisateurs", "utilisateurs");
@@ -183,10 +189,12 @@ public class InterfaceChefDepartement extends JFrame {
         contentPanel.add(gestionUtilisateursPanel, "utilisateurs");
 
         // Assignation cours
+
         assignerCoursPanel = new AssignerCours(appState);
         contentPanel.add(assignerCoursPanel, "assignation");
 
         // Ajout cours
+
         ajoutCoursPanel = new AjoutCoursPanel(assignerCoursPanel);
         contentPanel.add(ajoutCoursPanel, "ajoutcours");
 
@@ -194,6 +202,7 @@ public class InterfaceChefDepartement extends JFrame {
         contentPanel.add(ajoutUtilisateurPanel,"ajout");
 
         // Génération PDF
+
         contentPanel.add(createGenererPDFPanel(), "genererpdf");
     }
 

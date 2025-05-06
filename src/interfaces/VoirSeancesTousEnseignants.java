@@ -71,8 +71,9 @@ public class VoirSeancesTousEnseignants extends JPanel {
         JPanel controlPanel = new JPanel(new BorderLayout(10, 10));
 
         // Panel de filtres
+
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        filterCombo = new JComboBox<>(new String[]{"Toutes", "Validees", "En attente", "Refusees"});
+        filterCombo = new JComboBox<>(new String[]{"Toutes", "validee", "en attente", "refusee"});
         filterCombo.addActionListener(e -> applyFilters());
 
         JButton refreshBtn = createActionButton("Actualiser", Color.GRAY, e -> chargerDonnees());
@@ -82,6 +83,7 @@ public class VoirSeancesTousEnseignants extends JPanel {
         filterPanel.add(refreshBtn);
 
         // Panel d'actions
+
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         JButton exportBtn = createActionButton("Exporter", Color.BLUE, e -> exporterPDF());
         actionPanel.add(exportBtn);
@@ -103,6 +105,7 @@ public class VoirSeancesTousEnseignants extends JPanel {
         button.addActionListener(action);
 
         // Effet de survol
+        
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {

@@ -7,7 +7,6 @@ public class Utilisateur {
     private String role;
     private String NomComplet ;
 
-    public Utilisateur() {}
 
     public Utilisateur(int id, String login, String motDePasse, String role) {
         this.id = id;
@@ -16,12 +15,6 @@ public class Utilisateur {
         this.role = role;
     }
 
-    // Constructeur
-    public Utilisateur(int id, String login, String role) {
-        this.id = id;
-        this.login = login;
-        this.role = role;
-    }
 
     // Getters
     public int getId() {

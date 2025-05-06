@@ -1,16 +1,11 @@
 
-
 package interfaces;
 
 import DBO.DBconnect;
-import models.Utilisateur;
-
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.sql.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class LoginFrame extends JFrame {
     private JTextField loginField;
@@ -60,6 +55,7 @@ public class LoginFrame extends JFrame {
         formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
 
         // Textes institutionnels
+
         JLabel uniLabel = new JLabel("UNIVERSITE IBA DER THIAM DE THIES");
         uniLabel.setFont(new Font("Arial", Font.BOLD, 24));
         uniLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -94,16 +90,18 @@ public class LoginFrame extends JFrame {
         formPanel.add(titleLabel);
 
         // Champs de formulaire avec tailles fixes
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.NONE;
 
         // Login
+
         JPanel loginPanel = new JPanel(new GridBagLayout());
         loginPanel.setBackground(Color.WHITE);
 
-        JLabel loginLabel = new JLabel("     Login:");
+        JLabel loginLabel = new JLabel("       Login:");
         loginLabel.setFont(new Font("Arial", Font.BOLD, 12));
         loginField = new JTextField(20);
         loginField.setPreferredSize(new Dimension(200, 30));

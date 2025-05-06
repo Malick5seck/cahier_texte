@@ -200,7 +200,7 @@ public class InterfaceEnseignant extends JFrame {
         gbc.gridx = 1;
         panel.add(dateField, gbc);
 
-        heureDebutField = new JTextField("08h:00", 18);
+        heureDebutField = new JTextField("08:00", 18);
         heureDebutField.setPreferredSize(new Dimension(200, 40));
         gbc.gridy++;
         gbc.gridx = 0;
@@ -208,11 +208,11 @@ public class InterfaceEnseignant extends JFrame {
         gbc.gridx = 1;
         panel.add(heureDebutField, gbc);
 
-        heureFinField = new JTextField("10h:00", 18);
+        heureFinField = new JTextField("10:00", 18);
         heureFinField.setPreferredSize(new Dimension(200, 40));
         gbc.gridy++;
         gbc.gridx = 0;
-        panel.add(new JLabel("Heure fin (HH:00) :"), gbc);
+        panel.add(new JLabel("Heure fin (HH:mm) :"), gbc);
         gbc.gridx = 1;
         panel.add(heureFinField, gbc);
 
@@ -277,7 +277,7 @@ public class InterfaceEnseignant extends JFrame {
     }
 
     private void setupEventHandlers() {
-        // Initialisation déjà faite dans les méthodes de création des boutons
+
     }
 
     private void confirmAndExit() {
@@ -399,15 +399,15 @@ public class InterfaceEnseignant extends JFrame {
 
                 String statut = (String) table.getModel().getValueAt(row, 4);
                 if ("validée".equalsIgnoreCase(statut)) {
-                    c.setBackground(new Color(220, 255, 220)); // Vert clair
+                    c.setBackground(new Color(220, 255, 220));
                 } else if ("refusée".equalsIgnoreCase(statut)) {
-                    c.setBackground(new Color(255, 220, 220)); // Rouge clair
+                    c.setBackground(new Color(255, 220, 220));
                 } else {
                     c.setBackground(Color.WHITE);
                 }
 
                 if (isSelected) {
-                    c.setBackground(new Color(200, 200, 255)); // Bleu clair pour sélection
+                    c.setBackground(new Color(200, 200, 255));
                 }
 
                 return c;
@@ -442,6 +442,7 @@ public class InterfaceEnseignant extends JFrame {
         }
 
         // Nettoyer le panel et ajouter le tableau avec scroll
+
         listeSeancesPanel.removeAll();
         listeSeancesPanel.setLayout(new BorderLayout());
         listeSeancesPanel.add(new JScrollPane(table), BorderLayout.CENTER);

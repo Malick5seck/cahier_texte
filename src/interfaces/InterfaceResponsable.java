@@ -20,14 +20,15 @@ public class InterfaceResponsable extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-
         // Panel principal
+
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
 
         mainPanel.add(createHeaderPanel(), BorderLayout.NORTH);
 
         // Sidebar bleue
+
         mainPanel.add(createNavigationPanel(), BorderLayout.WEST);
 
         cardLayout = new CardLayout();
@@ -36,6 +37,7 @@ public class InterfaceResponsable extends JFrame {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Panels de contenu
+
         JPanel welcomePanel = createWelcomePanel();
         validationPanel = new ValidationSeancesResponsable();
         seancesValideesPanel = new SeancesValidees();
@@ -48,15 +50,16 @@ public class InterfaceResponsable extends JFrame {
 
         setContentPane(mainPanel);
     }
-
+       // Panel principal pour la bande grise
     private JPanel createHeaderPanel() {
-        // Panel principal pour la bande grise
+
         JPanel greyBandPanel = new JPanel(new BorderLayout());
         greyBandPanel.setBackground(new Color(240, 240, 240));
         greyBandPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         greyBandPanel.setPreferredSize(new Dimension(getWidth(), 60));
 
         // Titre centré
+
         JLabel titre = new JLabel("Espace Responsable de Classe", SwingConstants.CENTER);
         titre.setFont(new Font("Arial", Font.BOLD, 24));
         titre.setForeground(Color.BLACK);
@@ -73,6 +76,7 @@ public class InterfaceResponsable extends JFrame {
         navPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
         // Logo Panel
+
         JPanel logoPanel = new JPanel();
         logoPanel.setBackground(new Color(70, 130, 180));
         logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -93,6 +97,7 @@ public class InterfaceResponsable extends JFrame {
         navPanel.add(Box.createVerticalStrut(20));
 
         // Boutons de navigation
+
         JButton btnValidation = createNavButton("Validation des séances", "validation");
         JButton btnValidees = createNavButton("Séances validées", "validees");
         JButton btnDeconnexion = createNavButton("Déconnexion", "logout", new Color(220, 80, 60));
@@ -134,6 +139,7 @@ public class InterfaceResponsable extends JFrame {
         });
 
         // Effet de survol
+
         button.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent evt) {
                 button.setBackground(bgColor.brighter());

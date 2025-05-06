@@ -1,6 +1,3 @@
-
-
-
 package interfaces;
 
 import DBO.DBconnect;
@@ -25,8 +22,10 @@ public class SeancesValidees extends JPanel {
         chargerSeancesValidees();
     }
 
+    // Panel principal
+
     private void initUI() {
-        // Panel principal
+
         JPanel headerPanel = new JPanel(new BorderLayout());
 
         JLabel titre = new JLabel("Seances validees", SwingConstants.CENTER);
@@ -35,15 +34,18 @@ public class SeancesValidees extends JPanel {
         headerPanel.add(titre, BorderLayout.NORTH);
 
         // Panel de recherche
+
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         filterPanel.setBackground(Color.WHITE);
 
         // Filtre par cours
+
         filterComboBox = new JComboBox<>();
         filterComboBox.addItem("Toutes les cours");
         filterComboBox.addActionListener(e -> filterTable());
 
         // Barre de recherche
+
         searchField = new JTextField(20);
         searchField.addActionListener(e -> filterTable());
 
@@ -61,6 +63,7 @@ public class SeancesValidees extends JPanel {
         add(headerPanel, BorderLayout.NORTH);
 
         // Modèle de table
+
         model = new DefaultTableModel(
                 new Object[]{"ID", "Date", "Heure", "Cours", "Enseignant", "Contenu"},
                 0
@@ -72,6 +75,7 @@ public class SeancesValidees extends JPanel {
         };
 
         // Configuration de la table
+
         table = new JTable(model) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -82,6 +86,7 @@ public class SeancesValidees extends JPanel {
         };
 
         // Style de la table
+
         table.setRowHeight(30);
         table.setAutoCreateRowSorter(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -89,6 +94,7 @@ public class SeancesValidees extends JPanel {
         table.setShowGrid(false);
 
         // Centrer le texte dans les cellules
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         for (int i = 0; i < table.getColumnCount(); i++) {
@@ -98,6 +104,7 @@ public class SeancesValidees extends JPanel {
         }
 
         // Personnalisation de la colonne contenu
+
         table.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -113,12 +120,13 @@ public class SeancesValidees extends JPanel {
         });
 
         // Listener pour voir le contenu
+
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int row = table.rowAtPoint(e.getPoint());
                 int col = table.columnAtPoint(e.getPoint());
 
-                if (col == 5) { // Colonne contenu
+                if (col == 5) {
                     String contenu = (String) model.getValueAt(row, 5);
                     JOptionPane.showMessageDialog(SeancesValidees.this,
                             contenu, "Contenu de la seance", JOptionPane.INFORMATION_MESSAGE);
@@ -179,6 +187,7 @@ public class SeancesValidees extends JPanel {
         }
         return false;
     }
+
 
     private void filterTable() {
         String searchText = searchField.getText().toLowerCase();

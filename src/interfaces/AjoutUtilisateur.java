@@ -13,17 +13,20 @@ public class AjoutUtilisateur extends JPanel {
     private JTextField prenomField, nomField, loginField;
     private JPasswordField passwordField;
 
+    // Configuration du layout principal
 
     public AjoutUtilisateur() {
-        // Configuration du layout principal
+
         setLayout(new GridLayout(6, 2, 5, 10));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Police Arial pour l'interface
+
         Font labelFont = new Font("Arial", Font.BOLD, 20);
         Font fieldFont = new Font("Arial", Font.BOLD, 20);
 
         // Champ Prénom
+
         add(createLabel("Prénom :", labelFont));
         prenomField = createTextField();
         prenomField.setFont(fieldFont);
@@ -36,12 +39,14 @@ public class AjoutUtilisateur extends JPanel {
         add(nomField);
 
         // Champ Login
+
         add(createLabel("Login :", labelFont));
         loginField = createTextField();
         loginField.setFont(fieldFont);
         add(loginField);
 
         // Champ Mot de passe
+
         add(createLabel("Mot de passe :", labelFont));
         passwordField = new JPasswordField();
         passwordField.setPreferredSize(new Dimension(getWidth() , 45));
@@ -52,21 +57,25 @@ public class AjoutUtilisateur extends JPanel {
         add(passwordField);
 
         // Champ Type d'utilisateur
+
         add(createLabel("Type d'utilisateur :", labelFont));
         typeCombo = new JComboBox<>(new String[]{"enseignant", "responsable"});
         typeCombo.setFont(fieldFont);
         add(typeCombo);
 
         // Panel pour les boutons
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
         // Bouton Ajouter
+
         JButton btnAjouter = createButton("Ajouter", new Color(50, 150, 50));
         btnAjouter.addActionListener(e -> ajouterUtilisateur());
         addHoverEffect(btnAjouter, new Color(40, 130, 40), new Color(50, 150, 50));
 
         // Bouton Annuler
+
         JButton btnAnnuler = createButton("Annuler", new Color(200, 50, 50));
         btnAnnuler.addActionListener(e -> resetFields());
         addHoverEffect(btnAnnuler, new Color(180, 40, 40), new Color(200, 50, 50));
@@ -82,6 +91,7 @@ public class AjoutUtilisateur extends JPanel {
     }
 
     // effet de survol
+
     private void addHoverEffect(JButton button, Color hoverColor, Color normalColor) {
         button.addMouseListener(new MouseAdapter() {
             @Override
@@ -99,6 +109,7 @@ public class AjoutUtilisateur extends JPanel {
     }
 
     // Méthode creation des  labels
+
     private JLabel createLabel(String text, Font font) {
         JLabel label = new JLabel(text);
         label.setFont(font);
@@ -107,6 +118,7 @@ public class AjoutUtilisateur extends JPanel {
     }
 
     // Méthode creation des champs texte
+
     private JTextField createTextField() {
         JTextField field = new JTextField();
         field.setBorder(BorderFactory.createCompoundBorder(
@@ -116,6 +128,7 @@ public class AjoutUtilisateur extends JPanel {
     }
 
     // Méthode creation des boutons
+
     private JButton createButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setPreferredSize(new Dimension(110, 32));

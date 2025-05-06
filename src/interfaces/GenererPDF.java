@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 public class GenererPDF {
 
     // Formats et configurations constants
+
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final float[] COLUMN_WIDTHS_EDT = {2, 2, 3, 3};
     private static final float[] COLUMN_WIDTHS_ENS = {3, 3, 4};
@@ -114,8 +115,8 @@ public class GenererPDF {
     private static void afficherMenuPrincipal(Window parent) {
         String[] options = {
                 "Générer l'emploi du temps",
-                "Générer la liste des Enseignants",
-                "Quitter"
+                "Générer la liste des Enseignants"
+
         };
 
         int choix = JOptionPane.showOptionDialog(
@@ -170,7 +171,7 @@ public class GenererPDF {
                              "JOIN cours c ON s.cours_id = c.id " +
                              "JOIN utilisateur u ON s.Enseignant_id = u.id " +
                              "WHERE s.dateseance BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY) " +
-                             "AND s.statut = 'validé' " +  // Filtre sur le statut
+                             "AND s.statut = 'validee' " +
                              "ORDER BY s.dateseance, s.heure_debut")) {
 
             ResultSet rs = ps.executeQuery();

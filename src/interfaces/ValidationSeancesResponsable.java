@@ -21,6 +21,7 @@ public class ValidationSeancesResponsable extends JPanel {
         setBackground(Color.WHITE);
 
         // En-tête
+
         JPanel headerPanel = new JPanel(new BorderLayout());
 
         JLabel titre = new JLabel("Gestion des séances", SwingConstants.CENTER);
@@ -29,6 +30,7 @@ public class ValidationSeancesResponsable extends JPanel {
         headerPanel.add(titre, BorderLayout.CENTER);
 
         // Barre de recherche
+
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         searchPanel.setBackground(Color.WHITE);
         searchField = new JTextField(20);
@@ -42,6 +44,7 @@ public class ValidationSeancesResponsable extends JPanel {
         add(headerPanel, BorderLayout.NORTH);
 
         // Table et modèle
+
         model = new DefaultTableModel(new String[]{
                 "ID", "Cours", "Date", "Heure", "Contenu", "Commentaire", "Statut", "Actions"
         }, 0) {
@@ -58,6 +61,7 @@ public class ValidationSeancesResponsable extends JPanel {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         // Centrage et rendu personnalisé pour la colonne Statut
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
@@ -68,6 +72,7 @@ public class ValidationSeancesResponsable extends JPanel {
         }
 
         // Rendu personnalisé pour la colonne Statut
+
         table.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -77,9 +82,9 @@ public class ValidationSeancesResponsable extends JPanel {
                 setHorizontalAlignment(JLabel.CENTER);
 
                 if ("Validée".equals(value)) {
-                    c.setForeground(new Color(0, 128, 0)); // Vert
+                    c.setForeground(new Color(0, 128, 0));
                 } else if ("Refusée".equals(value)) {
-                    c.setForeground(new Color(200, 0, 0)); // Rouge
+                    c.setForeground(new Color(200, 0, 0));
                 } else {
                     c.setForeground(Color.BLACK);
                 }
@@ -88,6 +93,7 @@ public class ValidationSeancesResponsable extends JPanel {
         });
 
         // Rendu et édition de la colonne "Actions"
+
         table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer());
         table.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor());
 
@@ -127,7 +133,7 @@ public class ValidationSeancesResponsable extends JPanel {
             boolean ok = SeanceDAO.mettreAJourStatut(idSeance, "validee", null);
             if (ok) {
                 model.setValueAt("Validée", row, 6);
-                model.setValueAt("", row, 5); // enleve la colonne commentaire
+                model.setValueAt("", row, 5);
                 JOptionPane.showMessageDialog(this, "Séance validée avec succès !");
                 // Désactive les boutons pour cette ligne apres validation
                 table.getColumnModel().getColumn(7).setCellRenderer(new DisabledButtonRenderer());
@@ -220,8 +226,8 @@ public class ValidationSeancesResponsable extends JPanel {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus,
-                                                       int row, int column) {
+                boolean isSelected, boolean hasFocus,
+                int row, int column) {
             String statut = (String) table.getModel().getValueAt(row, 6);
             validerBtn.setEnabled(!"Validée".equals(statut) && !"Refusée".equals(statut));
             refuserBtn.setEnabled(!"Validée".equals(statut) && !"Refusée".equals(statut));
@@ -257,7 +263,7 @@ public class ValidationSeancesResponsable extends JPanel {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value,
-                                                     boolean isSelected, int row, int column) {
+               boolean isSelected, int row, int column) {
             String statut = (String) table.getModel().getValueAt(row, 6);
             validerBtn.setEnabled(!"Validée".equals(statut) && !"Refusée".equals(statut));
             refuserBtn.setEnabled(!"Validée".equals(statut) && !"Refusée".equals(statut));
@@ -271,6 +277,7 @@ public class ValidationSeancesResponsable extends JPanel {
     }
 
     // Renderer pour désactiver les boutons après validation/refus
+
     private class DisabledButtonRenderer extends JPanel implements TableCellRenderer {
         private final JButton validerBtn = new JButton("Valider");
         private final JButton refuserBtn = new JButton("Refuser");

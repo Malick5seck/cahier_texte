@@ -18,9 +18,10 @@ public class AjoutCoursPanel extends JPanel {
     private DefaultTableModel tableModel;
 
     // Couleurs personnalisées
-    private final Color PRIMARY_COLOR = new Color(70, 130, 180);  // Bleu acier
+
+    private final Color PRIMARY_COLOR = new Color(70, 130, 180);
     private final Color HOVER_COLOR = new Color(50, 110, 160);
-    private final Color SECONDARY_COLOR = new Color(220, 80, 80);  // Rouge doux
+    private final Color SECONDARY_COLOR = new Color(220, 80, 80);
     private final Color SECONDARY_HOVER_COLOR = new Color(200, 60, 60);
     private final Color BACKGROUND_COLOR = new Color(245, 248, 250);
     private final Color CARD_COLOR = Color.WHITE;
@@ -30,9 +31,10 @@ public class AjoutCoursPanel extends JPanel {
         initUI();
         chargerCours();
     }
+    // Configuration du layout principal
 
     private void initUI() {
-        // Configuration du layout principal
+
         setLayout(new GridBagLayout());
         setBackground(BACKGROUND_COLOR);
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -43,6 +45,7 @@ public class AjoutCoursPanel extends JPanel {
         gbc.weightx = 1;
 
         //  Panel formulaire d'ajout
+
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(CARD_COLOR);
         formPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -56,6 +59,7 @@ public class AjoutCoursPanel extends JPanel {
         formGbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Composants du formulaire
+
         formGbc.gridx = 0;
         formGbc.gridy = 0;
         formPanel.add(new JLabel("Nom du cours:"), formGbc);
@@ -80,10 +84,12 @@ public class AjoutCoursPanel extends JPanel {
         formPanel.add(new JScrollPane(descriptionArea), formGbc);
 
         // Ajout du formPanel au panel principal
+
         gbc.gridy = 0;
         add(formPanel, gbc);
 
         // Panel des boutons
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setBackground(BACKGROUND_COLOR);
 
@@ -100,6 +106,7 @@ public class AjoutCoursPanel extends JPanel {
         add(buttonPanel, gbc);
 
         //Tableau des cours
+
         String[] columns = {"ID", "Nom", "Description"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -111,7 +118,6 @@ public class AjoutCoursPanel extends JPanel {
         coursTable = new JTable(tableModel);
         coursTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         coursTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        //coursTable.getTableHeader().setBackground(PRIMARY_COLOR);
         coursTable.getTableHeader().setForeground(Color.black);
         coursTable.setRowHeight(25);
         coursTable.setShowGrid(false);
@@ -119,6 +125,7 @@ public class AjoutCoursPanel extends JPanel {
         coursTable.setFillsViewportHeight(true);
 
         // Style alterné pour les lignes
+
         coursTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,

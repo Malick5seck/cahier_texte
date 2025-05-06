@@ -15,19 +15,10 @@ public class Seance {
     private String commentaire;
     private Object commentaireRefus;
 
-    //  Constructeur complet avec ID (pour validation/responsable)
+    //  Constructeur complet avec ID
+
     public Seance(int id, String nomCours, LocalDate date, LocalTime heureDebut, String contenu, String statut, String commentaire) {
         this.id = id;
-        this.nomCours = nomCours;
-        this.date = date;
-        this.heureDebut = heureDebut;
-        this.contenu = contenu;
-        this.statut = statut;
-        this.commentaire = commentaire;
-    }
-
-    // Constructeur sans ID
-    public Seance(String nomCours, LocalDate date, LocalTime heureDebut, String contenu, String statut, String commentaire) {
         this.nomCours = nomCours;
         this.date = date;
         this.heureDebut = heureDebut;
@@ -113,7 +104,4 @@ public class Seance {
         return commentaireRefus;
     }
 
-    public void setCommentaireRefus(Object commentaireRefus) {
-        this.commentaireRefus = commentaireRefus;
-    }
 }

@@ -39,6 +39,7 @@ public class AssignerCours extends JPanel {
         headerPanel.add(title, BorderLayout.CENTER);
 
         // Main Form Panel
+
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(new Color(240, 240, 240));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -54,10 +55,12 @@ public class AssignerCours extends JPanel {
         styleJList(coursList);
 
         // Police monospace pour l'alignement des colonnes
+
         Font monospaceFont = new Font(Font.MONOSPACED , Font.BOLD, 12);
         coursList.setFont(monospaceFont);
 
         // Renderer personnalisé avec alignement en colonnes
+
         coursList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -69,7 +72,7 @@ public class AssignerCours extends JPanel {
                     setText(item.toFormattedString());
 
                     if (item.estAssigné) {
-                        setForeground(new Color(0, 100, 0)); // Vert foncé pour les cours assignés
+                        setForeground(new Color(0, 100, 0));
                         if (isSelected) {
                             setBackground(new Color(200, 255, 200));
                         }
@@ -86,6 +89,7 @@ public class AssignerCours extends JPanel {
         });
 
         // Add components to form panel
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(new JLabel("Enseignants:"), gbc);
@@ -103,6 +107,7 @@ public class AssignerCours extends JPanel {
         formPanel.add(new JScrollPane(coursList), gbc);
 
         // Buttons Panel
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         buttonPanel.setBackground(new Color(240, 240, 240));
 
